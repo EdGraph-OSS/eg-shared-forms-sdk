@@ -1,0 +1,232 @@
+:root {
+  --app-sidebar-width: 300px;
+}
+
+svg,
+img,
+span {
+  display: inline-block;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html.dark {
+  background: #121212;
+  color-scheme: dark;
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  @apply bg-accent h1 w-full inset-0 opacity-90;
+  position: fixed;
+  z-index: 1031;
+}
+
+icon {
+  display: inline-block;
+  line-height: 0;
+  height: 0;
+  font-size: inherit;
+}
+
+button icon {
+  @apply translate-y-0.6;
+}
+
+revo-grid {
+  height: 100%;
+}
+
+.toolbar-icon {
+  @apply h-10 w-10 rounded-sm flex-center-inline transition-200 transform hover:(text-accent scale-[1.1] bg-[rgba(255, 255, 255, 0.1)]);
+}
+
+input.input-block {
+  @apply focus:ring-accent dark:text-accentDark focus:border-accent dark:text-accentDark flex-1 block w-full rounded-none rounded-r-md sm: border-gray-300;
+}
+
+.single-line {
+  display: block;
+  display: -webkit-box;
+  line-clamp: 1;
+  box-orient: vertical;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+[readonly],
+[readonly] *,
+[readonly] .n-switch__button,
+[readonly] .n-switch .n-switch__rail {
+  cursor: not-allowed !important;
+}
+
+kbd {
+  @apply border dark:border-gray-600 rounded bg-gray-100 px-1 inline-block dark:bg-gray-800;
+}
+
+.n-dialog__icon {
+  display: none !important;
+}
+
+.vl-overlay .vl-background {
+  @apply !opacity-99 !bg-bg;
+}
+
+.vl-overlay .vl-icon {
+  @apply flex flex-col items-center justify-center space-y-2;
+}
+
+.vl-overlay svg {
+  stroke: var(--eg-accent);
+}
+
+/* Table Start */
+table.simple-table {
+  /* font-size: 1rem; */
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+  box-sizing: border-box;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+table.simple-table th,
+table.simple-table thead th {
+  font-size: 12px;
+  line-height: 1.5;
+  border-collapse: collapse;
+  box-sizing: border-box;
+  text-align: inherit;
+  padding: .75rem;
+  vertical-align: center;
+  background-color: rgba(0, 0, 0, .1) !important;
+  color: var(--eg-text);
+  border: 1px solid var(--eg-gray);
+  font-weight: bold !important;
+}
+
+.dark table.simple-table th {
+  background-color: rgba(255, 255, 255, .1);
+  color: white;
+}
+
+table.simple-table td,
+table.simple-table th {
+  /* font-size: 1rem; */
+  font-weight: 400;
+  line-height: 1.5;
+  border: 1px solid var(--eg-gray);
+  border-collapse: collapse;
+  box-sizing: border-box;
+  padding: .75rem;
+  vertical-align: top;
+  background: white;
+  color: var(--eg-text);
+  /* box-shadow: 0 0 1px #212529; */
+}
+
+.dark table.simple-table td {
+  background: var(--eg-bg);
+  color: var(--eg-text);
+}
+
+table.simple-table>tbody>tr:hover>td {
+  background-color: rgba(0, 0, 0, .05) !important;
+}
+
+.dark table.simple-table>tbody>tr:hover>td {
+  background-color: rgba(255, 255, 255, .05) !important;
+}
+
+
+.table_container {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: auto;
+}
+
+/* Table End */
+
+.n-form-item .n-form-item-blank {
+  display: flex !important;
+  width: 100% !important;
+}
+
+.n-form-item--no-label {
+  margin-bottom: 0 !important;
+}
+
+.ProseMirror,
+.HtmlContent {
+  @apply outline-none;
+
+  ol li {
+    list-style: decimal;
+  }
+
+  li {
+    list-style: disc;
+    margin-left: 1.5rem;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--eg-bg);
+    color: var(--eg-text);
+    padding: 0.25rem 0.5rem;
+    text-align: left;
+    width: auto;
+  }
+
+  th {
+    background: var(--eg-bg);
+    color: var(--eg-text);
+    font-weight: 600;
+  }
+
+  br {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* HTML editor: content that will be redacted on save (disallowed by sanitizer) */
+.disallowed {
+  background-color: rgba(239, 68, 68, 0.35);
+  border-bottom: 2px solid rgb(239, 68, 68);
+  border-radius: 2px;
+}
+
+.dark {
+
+  .ProseMirror,
+  .HtmlContent {
+
+    td,
+    th {
+      border-color: gray;
+    }
+  }
+}
+.debugbox {
+  @apply fixed bottom-0 right-0 w-300px h-96 bg-white border p-4 overflow-auto flex flex-col gap-4;
+}

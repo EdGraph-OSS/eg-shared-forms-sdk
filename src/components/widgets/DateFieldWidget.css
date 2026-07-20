@@ -1,0 +1,13 @@
+.popover-root {
+  width: 100% !important;
+  .chakra-input {
+    width: 100% !important;
+  }
+}
+
+/* The datepicker trigger renders an empty string when no date is selected,
+   so surface a placeholder without relying on a native input placeholder. */
+.eg-date-field-widget .popover-root button:empty::before {
+  content: 'Select a date';
+  color: #6c757d;
+}

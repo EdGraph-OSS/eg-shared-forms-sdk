@@ -1,0 +1,21 @@
+{
+	"folders": [
+    {
+      "path": "../.."
+    },
+    {
+      "path": "../../../EG.Applications.Forms/src/EdGraph.Applications.Forms.Web"
+    }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "editorInlayHint.background": "#00000000",
+      "editorInlayHint.foreground": "#7e40a5",
+      "editorInlayHint.parameterBackground": "#00000000",
+      "editorInlayHint.parameterForeground": "#4e5980",
+      "tab.activeBackground": "#484367",
+      "statusBar.noFolderBackground": "#053610",
+      "statusBar.noFolderForeground": "#EEFDF1"
+    }
+  }
+}
