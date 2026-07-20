@@ -72,8 +72,10 @@ export interface IFormQuestion {
   multiline?: boolean
   /** InfoMessage widget: bold lead-in shown before `text`. */
   preText?: string
-  /** InfoMessage widget: body copy shown after `preText`. */
+  /** InfoMessage widget: body copy shown after `preText`. Or widget: separator text rendered in place of the title. */
   text?: string
+  /** Email/Phone widget: input placeholder text. */
+  placeholder?: string
   /** InfoMessage widget: Chakra style overrides for the callout container. */
   styles?: Record<string, unknown>
   /** InfoMessage widget: optional lines rendered as a bulleted list below the text. */
@@ -160,8 +162,10 @@ export interface IFormComponentOpts {
   // question (see normalizeQuestion in utils/form.ts) so the render pipeline is unchanged.
   /** InfoMessage: bold lead-in shown before `text`. */
   preText?: string
-  /** InfoMessage: body copy shown after `preText`. */
+  /** InfoMessage: body copy shown after `preText`. Or: separator text rendered in place of the title. */
   text?: string
+  /** Email/Phone: input placeholder text. */
+  placeholder?: string
   /** InfoMessage/InfoCard: Chakra style overrides for the container. */
   styles?: Record<string, unknown>
   /** InfoMessage: optional lines rendered as a bulleted list below the text. */

@@ -126,6 +126,7 @@ function normalizeQuestion(q: IFormQuestion): IFormQuestion {
     type: mapped,
     preText: c.preText ?? q.preText,
     text: c.text ?? q.text,
+    placeholder: c.placeholder ?? q.placeholder,
     styles: c.styles ?? q.styles,
     list: c.list ?? q.list,
     icon: c.icon ?? q.icon,
@@ -338,6 +339,13 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
       if (qType === QuestionType.Image || qType === QuestionType.Html) {
         question.defaultValue = typeof qSchema.default === 'string' ? qSchema.default : undefined
       }
+      if (qType === QuestionType.Email || qType === QuestionType.Phone) {
+        question.placeholder = typeof qUi['ui:placeholder'] === 'string' ? qUi['ui:placeholder'] : undefined
+      }
+      if (qType === QuestionType.Or) {
+        const orOpts = (qUi['ui:options'] ?? {}) as Record<string, unknown>
+        question.text = typeof orOpts.label === 'string' ? orOpts.label : undefined
+      }
       if (qType === QuestionType.InfoMessage) {
         const infoOpts = (qUi['ui:options'] ?? {}) as Record<string, unknown>
         question.preText = typeof infoOpts.preText === 'string' ? infoOpts.preText : undefined
@@ -391,6 +399,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
           type: componentType,
           ...(question.preText !== undefined ? { preText: question.preText } : {}),
           ...(question.text !== undefined ? { text: question.text } : {}),
+          ...(question.placeholder !== undefined ? { placeholder: question.placeholder } : {}),
           ...(question.styles !== undefined ? { styles: question.styles } : {}),
           ...(question.list !== undefined ? { list: question.list } : {}),
           ...(question.icon !== undefined ? { icon: question.icon } : {}),
@@ -651,13 +660,13 @@ export function buildUiSchemaFromForm(form: IForm, components: IFormComponent[])
         case QuestionType.Email:
           sectionUi[fieldKey] = {
             'ui:widget': 'EmailWidget',
-            'ui:placeholder': q.description ?? 'Enter email address',
+            'ui:placeholder': q.placeholder ?? q.description ?? 'Enter email address',
           }
           break
         case QuestionType.Phone:
           sectionUi[fieldKey] = {
             'ui:widget': 'PhoneWidget',
-            'ui:placeholder': q.description ?? 'Enter phone number',
+            'ui:placeholder': q.placeholder ?? q.description ?? 'Enter phone number',
           }
           break
         case QuestionType.Number:
@@ -670,7 +679,7 @@ export function buildUiSchemaFromForm(form: IForm, components: IFormComponent[])
           // Purely presentational separator; holds no value and is stripped from formData output.
           sectionUi[fieldKey] = {
             'ui:widget': 'OrWidget',
-            'ui:options': { label: q.title || 'or' },
+            'ui:options': { label: q.text || 'or' },
           }
           break
         case QuestionType.InfoMessage:
