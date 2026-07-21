@@ -126,6 +126,7 @@ function normalizeQuestion(q: IFormQuestion): IFormQuestion {
     type: mapped,
     preText: c.preText ?? q.preText,
     text: c.text ?? q.text,
+    body: c.body ?? q.body,
     placeholder: c.placeholder ?? q.placeholder,
     styles: c.styles ?? q.styles,
     list: c.list ?? q.list,
@@ -350,6 +351,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
         const infoOpts = (qUi['ui:options'] ?? {}) as Record<string, unknown>
         question.preText = typeof infoOpts.preText === 'string' ? infoOpts.preText : undefined
         question.text = typeof infoOpts.text === 'string' ? infoOpts.text : undefined
+        question.body = typeof infoOpts.body === 'string' ? infoOpts.body : undefined
         question.styles = (infoOpts.customStyles && typeof infoOpts.customStyles === 'object') ? infoOpts.customStyles as Record<string, unknown> : undefined
         question.list = Array.isArray(infoOpts.list)
           ? (infoOpts.list as unknown[]).filter((s): s is string => typeof s === 'string')
@@ -399,6 +401,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
           type: componentType,
           ...(question.preText !== undefined ? { preText: question.preText } : {}),
           ...(question.text !== undefined ? { text: question.text } : {}),
+          ...(question.body !== undefined ? { body: question.body } : {}),
           ...(question.placeholder !== undefined ? { placeholder: question.placeholder } : {}),
           ...(question.styles !== undefined ? { styles: question.styles } : {}),
           ...(question.list !== undefined ? { list: question.list } : {}),
@@ -421,6 +424,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
         // The config now lives in `component`; clear the flat fields so there is a single source of truth.
         question.preText = undefined
         question.text = undefined
+        question.body = undefined
         question.styles = undefined
         question.list = undefined
         question.icon = undefined
@@ -690,6 +694,7 @@ export function buildUiSchemaFromForm(form: IForm, components: IFormComponent[])
               ...(q.styles ? { customStyles: q.styles } : {}),
               ...(q.preText ? { preText: q.preText } : {}),
               ...(q.text ? { text: q.text } : {}),
+              ...(q.body ? { body: q.body } : {}),
               ...(q.list && q.list.length ? { list: q.list } : {}),
             },
           }

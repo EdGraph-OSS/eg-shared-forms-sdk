@@ -74,6 +74,8 @@ export interface IFormQuestion {
   preText?: string
   /** InfoMessage widget: body copy shown after `preText`. Or widget: separator text rendered in place of the title. */
   text?: string
+  /** InfoMessage widget: paragraph rendered below the preText/text line and above the list. */
+  body?: string
   /** Email/Phone widget: input placeholder text. */
   placeholder?: string
   /** InfoMessage widget: Chakra style overrides for the callout container. */
@@ -164,6 +166,8 @@ export interface IFormComponentOpts {
   preText?: string
   /** InfoMessage: body copy shown after `preText`. Or: separator text rendered in place of the title. */
   text?: string
+  /** InfoMessage: paragraph rendered below the preText/text line and above the list. */
+  body?: string
   /** Email/Phone: input placeholder text. */
   placeholder?: string
   /** InfoMessage/InfoCard: Chakra style overrides for the container. */

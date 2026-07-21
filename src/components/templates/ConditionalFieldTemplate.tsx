@@ -79,6 +79,8 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
     'OrWidget',
     'InfoMessageWidget',
     'InfoCardWidget',
+    'EmailWidget',
+    'PhoneWidget',
   ].includes(widget)
 
   const showLabel = isString(widget) && ![
@@ -117,6 +119,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
                 md: 1,
               }
             : undefined}
+          w={fullWidth ? undefined : 'full'}
           alignItems="center"
           minW={0}
         >
@@ -152,6 +155,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
                 md: '0 0 auto',
               }
             : undefined}
+          w={fullWidth ? undefined : 'full'}
             minW="390px"
         >
           {children}

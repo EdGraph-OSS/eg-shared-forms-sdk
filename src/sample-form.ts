@@ -772,6 +772,7 @@ const questions = [
       "type": "InfoMessage",
       "preText": "🔒 Your privacy matters: ",
       "text": "This information is protected and only used for district reporting as required by the Texas Education Agency. ",
+      "body": "This is the body",
       "styles": {
         "bg": "#fff3cd",
         "borderLeft": "4px solid #ffc107",
