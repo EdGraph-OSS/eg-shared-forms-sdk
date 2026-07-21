@@ -13,17 +13,13 @@ import validator from '@rjsf/validator-ajv8'
 import { useEffect, useState } from 'react'
 import TitleFieldTemplate from './components/templates/TitleFieldTemplate'
 import { ComponentType, IForm, IFormAggregated, IFormComponent, IFormQuestion, IFormSection } from './models/form'
-
-import './App.css'
 import { CustomFieldTemplate, DescriptionFieldTemplate, ErrorListTemplate, FieldErrorTemplate, ObjectFieldTemplate, SubmitButton } from './components/templates'
 import { CheckboxCardsField, ContactVerificationField, CurrentUserName, DateDropdownWidget, DateFieldWidget, EmailFieldWidget, HtmlFieldWidget, ImageFieldWidget, InfoCardWidget, InfoMessageWidget, InputFieldWidget, NumberFieldWidget, OrFieldWidget, PhoneFieldWidget, RadioCardsField, RadioFieldWidget, ScoringFieldWidget, SectionPicker, SelectFieldWidget, VerificationCodeWidget } from './components/widgets'
 import { Provider } from './ui'
 import { aggregateForm } from './utils/form'
-
 import React from 'react'
 import { humanizeRjsfErrors } from './utils'
 import { createConditionalRequiredCustomValidate } from './utils/conditionalRequiredValidate'
-
 import sampleForm from "./sample-form"
 import { Button } from '@chakra-ui/react'
 const { form, sections, questions } = sampleForm

@@ -8,7 +8,32 @@ import {
 import { isString } from 'lodash-es'
 import { evaluateVisibilityConditions } from '../../utils/visibility-conditions'
 
-const BODY_TEXT = '#4A5568'
+const styles = {
+  conditionalReveal: {
+    transition:
+      'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out, transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  row: {
+    py: 3,
+  },
+  label: {
+    color: '#4A5568',
+    _dark: { color: 'gray.200' },
+    fontSize: 'sm',
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1,
+  },
+  description: {
+    color: '#4A5568',
+    _dark: { color: 'gray.300' },
+    fontSize: 'sm',
+  },
+  fieldColumn: {
+    minW: '390px',
+  },
+} as const
 
 /** Marks the visual row inside ObjectFieldTemplate sections; border comes from parent via sx. */
 const FIELD_ROW_CLASS = 'rjsf-field-row'
@@ -30,8 +55,7 @@ function ConditionalReveal({
         overflow: 'hidden',
         pointerEvents: isVisible ? 'auto' : 'none',
         transform: isVisible ? 'translateY(0)' : 'translateY(-10px)',
-        transition:
-          'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out, transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: styles.conditionalReveal.transition,
       }}
     >
       {children}
@@ -100,7 +124,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
   ].includes(widget)
 
   return wrapIfConditional((
-    <Box className={FIELD_ROW_CLASS} style={style} py={3}>
+    <Box className={FIELD_ROW_CLASS} style={style} {...styles.row}>
       <Flex
         flexDir={{
           base: 'column',
@@ -110,8 +134,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
           base: 'stretch',
           md: fullWidth ? 'center' : 'stretch',
         }}
-        justify="space-between"
-      >
+        justify="space-between">
         <Box
           flex={fullWidth
             ? {
@@ -126,24 +149,14 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
           {label && showLabel && (
             <Text
               as="label"
-              color={BODY_TEXT}
-              _dark={{ color: 'gray.200' }}
-              fontSize="sm"
-              flex={1}
-              display="flex"
-              alignItems="center"
-              gap={1}
+              {...styles.label}
               className={showRequiredStar ? 'required-star' : ''}
               dangerouslySetInnerHTML={{ __html: String(label) }}
             />
           )}
 
           {description && showDescription && (
-            <Box
-              color={BODY_TEXT}
-              _dark={{ color: 'gray.300' }}
-              fontSize="sm"
-            >
+            <Box {...styles.description}>
               {description}
             </Box>
           )}
@@ -156,8 +169,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
               }
             : undefined}
           w={fullWidth ? undefined : 'full'}
-            minW="390px"
-        >
+          {...styles.fieldColumn}>
           {children}
         </Box>
       </Flex>
