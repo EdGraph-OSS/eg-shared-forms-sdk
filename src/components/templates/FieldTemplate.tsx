@@ -1,6 +1,5 @@
 import type {
-  FieldTemplateProps,
-  RJSFSchema,
+  FieldTemplateProps
 } from '@rjsf/utils'
 import {
   Box,
@@ -8,7 +7,6 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { isString } from 'lodash-es'
-
 
 export function CustomFieldTemplate(props: FieldTemplateProps) {
   const { id, style, label, help, required, description, errors, children, uiSchema } = props
@@ -64,8 +62,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
               }
             : undefined}
           alignItems="center"
-          minW={0}
-        >
+          minW={0}>
           {label && showLabel && (
             <Text
               as="label"
@@ -73,8 +70,7 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
               color="#4A5568"
               _dark={{ color: 'gray.100' }}
               fontSize="sm"
-              display="block"
-            >
+              display="block">
               {label}
               {required && <Text as="span" color="red.500" ml={1}>*</Text>}
             </Text>

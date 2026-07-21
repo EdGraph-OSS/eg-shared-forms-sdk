@@ -3,6 +3,7 @@ import type { SystemStyleObject } from '@chakra-ui/react'
 import {
   Box,
   Field,
+  Flex,
   Text,
 } from '@chakra-ui/react'
 
@@ -22,14 +23,14 @@ const DEFAULT_STYLES: SystemStyleObject = {
  * options), surfaced here as `props.options`:
  *   'ui:widget': 'InfoMessageWidget'
  *   'ui:options':
- *     customStyles: Chakra SystemStyleObject applied to the container (bg, border, padding, …)
+ *     styles: Chakra SystemStyleObject applied to the container (bg, border, padding, …)
  *     preText:      bold lead-in text (e.g. "🔒 Your privacy matters: ")
  *     text:         body text following the lead-in
  *     list:         optional array of strings rendered as a bulleted list
  */
 export default function InfoMessageWidget(props: WidgetProps) {
   const options = (props.options ?? {}) as Record<string, unknown>
-  const styles = (options.customStyles as SystemStyleObject | undefined) ?? DEFAULT_STYLES
+  const styles = (options.styles as SystemStyleObject | undefined) ?? DEFAULT_STYLES
   const preText = typeof options.preText === 'string' ? options.preText : ''
   const text = typeof options.text === 'string' ? options.text : ''
   const list = Array.isArray(options.list)
@@ -51,12 +52,12 @@ export default function InfoMessageWidget(props: WidgetProps) {
           lineHeight: 1.6,
           ...styles,
         }}>
-        {preText && (
-          <Text as="span" fontWeight="700">
-            {preText}
+        <Flex flexDir='row'>
+          <Text>
+            { preText && <Text as="span" fontWeight='700'>{preText}</Text> }
+            { text && <Text as="span" ml='6px'>{text}</Text> }
           </Text>
-        )}
-        {text && <Text as="span" ml='6px'>{text}</Text>}
+        </Flex>
         {list.length > 0 && (
           <Box as="ul" pl="20px" mt={preText || text ? '8px' : 0}>
             {list.map((item, i) => (

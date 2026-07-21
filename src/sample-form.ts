@@ -798,7 +798,7 @@ const questions = [
     "defaultValue": "",
     "component": {
       "type": "Email",
-      "placeholder": "name@example.com",
+      "placeholder": "placeholder@example.com",
       "minLength": 5,
       "maxLength": 254
     },
@@ -815,14 +815,14 @@ const questions = [
     "sectionId": "f9d2b6a4-3c1e-4a7b-8e5d-0f1a2b3c4d5e",
     "formId": "713aac46-d717-4c3f-9d88-7a8f987f0f15",
     "tenantId": "00000000-0000-0000-0000-000000000002",
-    "title": "Hello",
+    "title": "",
     "description": "",
     "type": "CustomComponent",
     "required": false,
     "defaultValue": "",
     "component": {
       "type": "Or",
-      "text": "OR Provide"
+      "text": "OR"
     },
     "validation": {},
     "options": [],
@@ -844,7 +844,7 @@ const questions = [
     "defaultValue": "",
     "component": {
       "type": "Phone",
-      "placeholder": "123-456-7890",
+      "placeholder": "713-456-7890",
       "minLength": 7,
       "maxLength": 20,
       "pattern": "^[+]?[0-9][0-9\\-\\s()]{5,18}[0-9]$"
