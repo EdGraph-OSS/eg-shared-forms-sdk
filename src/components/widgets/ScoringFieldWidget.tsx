@@ -11,6 +11,8 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ariaDescribedByIds } from '@rjsf/utils'
+import { scoringFieldRecipe } from '../../ui/recipes/scoring-field'
+import { useRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function ScoringFieldWidget<T = any, S extends StrictRJSFSchema = RJSFSchema, F extends FormContextType = any>({
   id,
@@ -43,15 +45,14 @@ export default function ScoringFieldWidget<T = any, S extends StrictRJSFSchema =
     onChange(score)
   }
 
-  const activeBg = '#2C5282'
-  const inactiveBg = '#E2E8F0'
-  const activeColor = 'white'
-  const inactiveColor = '#4A5568'
+  const recipe = useRecipeStyles('scoringField', scoringFieldRecipe)
+  const trackStyles = recipe({ invalid: !!error }).track
+  const headerStyles = recipe().header
 
   return (
     <Field.Root className='eg-scoring-field-widget' required={required} readOnly={readonly} invalid={!!error} mb={0}>
       {uiSchema?.['ui:header'] && (
-        <Text color="#4A5568" _dark={{ color: 'gray.300' }} fontWeight="600" mb={2} fontSize="sm">
+        <Text css={headerStyles} mb={2}>
           {uiSchema?.['ui:header']}
         </Text>
       )}
@@ -63,33 +64,28 @@ export default function ScoringFieldWidget<T = any, S extends StrictRJSFSchema =
         alignSelf={"end"}
         justify="end"
         alignItems="end"
-        borderRadius="md"
-        overflow="hidden"
-        borderWidth={error ? '2px' : '1px'}
-        borderColor={error ? 'red.500' : inactiveBg}
-        _dark={{ borderColor: error ? 'red.500' : 'gray.600' }}
+        css={trackStyles}
       >
         {scoreValues.map((score) => {
           const isSelected = currentValue === score
+          const buttonStyles = recipe({ selected: isSelected }).button as Record<string, unknown>
           return (
             <Button
               key={score}
               order={Number(score)}
               variant="solid"
-              bg={isSelected ? activeBg : inactiveBg}
-              color={isSelected ? activeColor : inactiveColor}
-              className={isSelected? "eg-active-score-bg" : "eg-inactive-score"}
+              className={isSelected ? "eg-active-score-bg" : "eg-inactive-score"}
               onClick={() => handleSelect(score)}
               disabled={readonly}
-              fontSize="sm"
-              fontWeight="bold"
               px={4}
               py={2}
-              borderRadius={0}
               borderRightWidth={score !== '0' ? '1px' : 0}
               borderRightColor="whiteAlpha.400"
               _hover={readonly ? {} : { opacity: 0.9 }}
-              _dark={{ bg: isSelected ? 'blue.600' : 'gray.700', color: isSelected ? 'white' : 'gray.100', borderRightColor: 'gray.600' }}
+              css={{
+                ...buttonStyles,
+                _dark: { ...(buttonStyles._dark as Record<string, unknown> | undefined), borderRightColor: 'gray.600' },
+              }}
             >
               {score === '0' ? 'N/A' : score}
             </Button>

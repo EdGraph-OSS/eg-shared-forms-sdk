@@ -5,6 +5,9 @@ import {
   PinInput,
   Text,
 } from '@chakra-ui/react'
+import { verificationCodeRecipe } from '../../ui/recipes/verification-code'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 type VerificationCodeOptions = {
   /** Number of digits in the code (defaults to 6). */
@@ -40,6 +43,9 @@ export default function VerificationCodeWidget(props: WidgetProps) {
     props.onChange(next === '' ? undefined : next)
   }
 
+  const pinStyles = useSingleRecipeStyles('verificationCode', verificationCodeRecipe)({ invalid: hasError })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   return (
     <Field.Root
       readOnly={props.readonly}
@@ -53,12 +59,7 @@ export default function VerificationCodeWidget(props: WidgetProps) {
         mt={1}
       >
         {props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontSize="16px"
-            fontWeight="600"
-          >
+          <Text css={headerStyles} fontSize="16px">
             {props.uiSchema?.['ui:header']}
           </Text>
         )}
@@ -77,10 +78,7 @@ export default function VerificationCodeWidget(props: WidgetProps) {
                 <PinInput.Input
                   index={index}
                   key={index}
-                  borderColor={hasError ? 'red.500' : undefined}
-                  _focus={{
-                    border: hasError ? '2px solid red' : '2px solid gray',
-                  }}
+                  css={pinStyles}
                 />
               ))}
             </PinInput.Control>

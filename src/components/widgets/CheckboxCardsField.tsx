@@ -3,9 +3,12 @@ import type { ReactNode } from 'react'
 import {
   CheckboxCard,
   Fieldset,
-  Flex,
   VStack,
 } from '@chakra-ui/react'
+import { IconBadge } from '../../ui/recipes/icon-badge'
+import { choiceCardRecipe } from '../../ui/recipes/choice-card'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 /** A single selectable card. Mirrors `RadioCardItem` in models/form.ts. */
 type CheckboxCardItem = {
@@ -88,25 +91,6 @@ function findTopParent(cards: CheckboxCardItem[], target: string): CheckboxCardI
   return null
 }
 
-function IconBadge({ children, size }: { children: ReactNode, size: string }) {
-  return (
-    <Flex
-      align="center"
-      justify="center"
-      flexShrink={0}
-      w={size}
-      h={size}
-      borderRadius="full"
-      bg="teal.400"
-      color="white"
-      fontSize={`calc(${size} / 2)`}
-      lineHeight={1}
-    >
-      {children}
-    </Flex>
-  )
-}
-
 export default function CheckboxCardsField(props: FieldProps) {
   const uiOptions = (props.uiSchema?.['ui:options'] ?? {}) as CheckboxCardsOptions
   const cards = parseCards(uiOptions.cards)
@@ -146,8 +130,11 @@ export default function CheckboxCardsField(props: FieldProps) {
     props.onChange(Object.keys(next).length ? next : undefined, props.fieldPathId.path)
   }
 
+  const choiceCardStyles = useRecipeStyles('choiceCard', choiceCardRecipe)
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   function renderCard(item: CheckboxCardItem, sub: boolean): ReactNode {
-    const badgeSize = sub ? '32px' : '40px'
+    const cardStyles = choiceCardStyles({ sub })
 
     return (
       <CheckboxCard.Root
@@ -164,13 +151,13 @@ export default function CheckboxCardsField(props: FieldProps) {
           gap={4}
           p={sub ? 3 : 4}
           borderColor={hasError ? 'red.500' : undefined}>
-          {item.icon && <IconBadge size={badgeSize}>{item.icon}</IconBadge>}
+          {item.icon && <IconBadge size={sub ? 'sm' : 'md'}>{item.icon}</IconBadge>}
           <CheckboxCard.Content>
-            <CheckboxCard.Label fontWeight="700" fontSize={sub ? '15px' : '16px'}>
+            <CheckboxCard.Label css={cardStyles.label}>
               {item.title}
             </CheckboxCard.Label>
             {item.description && (
-              <CheckboxCard.Description color="gray.500" _dark={{ color: 'gray.400' }}>
+              <CheckboxCard.Description css={cardStyles.description}>
                 {item.description}
               </CheckboxCard.Description>
             )}
@@ -209,11 +196,7 @@ export default function CheckboxCardsField(props: FieldProps) {
       disabled={isDisabled}
       invalid={hasError}>
       {props.uiSchema?.['ui:header'] && (
-        <Fieldset.Legend
-          color="#333"
-          _dark={{ color: 'gray.200' }}
-          fontWeight="600"
-          mb="16px">
+        <Fieldset.Legend css={headerStyles} mb="16px">
           {props.uiSchema?.['ui:header']}
         </Fieldset.Legend>
       )}

@@ -1,13 +1,5 @@
 import type { FieldErrorProps } from '@rjsf/utils'
-import { Text } from '@chakra-ui/react'
-
-const styles = {
-  error: {
-    mt: 1,
-    color: 'red.500',
-    fontSize: 'sm',
-  },
-} as const
+import { FieldError } from '../../ui/recipes/field-error'
 
 export default function FieldErrorTemplate(props: FieldErrorProps) {
   const errors = props.errors ?? []
@@ -18,9 +10,9 @@ export default function FieldErrorTemplate(props: FieldErrorProps) {
   return (
     <>
       {errors.map((error, index) => (
-        <Text className='eg-field-error-template' key={`${String(error)}-${index}`} {...styles.error}>
+        <FieldError className='eg-field-error-template' key={`${String(error)}-${index}`}>
           {String(error)}
-        </Text>
+        </FieldError>
       ))}
     </>
   )

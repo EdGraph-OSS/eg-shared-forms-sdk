@@ -1,39 +1,11 @@
 import type { FieldTemplateProps } from '@rjsf/utils'
 import type { ReactNode } from 'react'
-import {
-  Box,
-  Flex,
-  Text,
-} from '@chakra-ui/react'
 import { isString } from 'lodash-es'
 import { evaluateVisibilityConditions } from '../../utils/visibility-conditions'
+import { ConditionalField } from '../../ui/recipes/conditional-field'
 
-const styles = {
-  conditionalReveal: {
-    transition:
-      'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out, transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  row: {
-    py: 3,
-  },
-  label: {
-    color: '#4A5568',
-    _dark: { color: 'gray.200' },
-    fontSize: 'sm',
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 1,
-  },
-  description: {
-    color: '#4A5568',
-    _dark: { color: 'gray.300' },
-    fontSize: 'sm',
-  },
-  fieldColumn: {
-    minW: '390px',
-  },
-} as const
+const CONDITIONAL_REVEAL_TRANSITION =
+  'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out, transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)'
 
 /** Marks the visual row inside ObjectFieldTemplate sections; border comes from parent via sx. */
 const FIELD_ROW_CLASS = 'rjsf-field-row'
@@ -55,7 +27,7 @@ function ConditionalReveal({
         overflow: 'hidden',
         pointerEvents: isVisible ? 'auto' : 'none',
         transform: isVisible ? 'translateY(0)' : 'translateY(-10px)',
-        transition: styles.conditionalReveal.transition,
+        transition: CONDITIONAL_REVEAL_TRANSITION,
       }}
     >
       {children}
@@ -88,11 +60,11 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
     hasConditions ? <ConditionalReveal isVisible={conditionsMatch}>{node}</ConditionalReveal> : node
 
   if (uiSchema?.['ui:widget'] === 'ImageWidget') {
-    return wrapIfConditional(<Box className={FIELD_ROW_CLASS}>{children}</Box>)
+    return wrapIfConditional(<div className={FIELD_ROW_CLASS}>{children}</div>)
   }
 
   if (schema.type === 'object') {
-    return wrapIfConditional(<Box className={FIELD_ROW_CLASS}>{children}</Box>)
+    return wrapIfConditional(<div className={FIELD_ROW_CLASS}>{children}</div>)
   }
 
   const widget = uiSchema?.['ui:widget']
@@ -124,57 +96,28 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
   ].includes(widget)
 
   return wrapIfConditional((
-    <Box className={FIELD_ROW_CLASS} style={style} {...styles.row}>
-      <Flex
-        flexDir={{
-          base: 'column',
-          md: fullWidth ? 'row' : 'column',
-        }}
-        align={{
-          base: 'stretch',
-          md: fullWidth ? 'center' : 'stretch',
-        }}
-        justify="space-between">
-        <Box
-          flex={fullWidth
-            ? {
-                base: 'none',
-                md: 1,
-              }
-            : undefined}
-          w={fullWidth ? undefined : 'full'}
-          alignItems="center"
-          minW={0}
-        >
+    <ConditionalField.Row className={FIELD_ROW_CLASS} style={style} fullWidth={fullWidth}>
+      <ConditionalField.Layout>
+        <ConditionalField.LabelColumn>
           {label && showLabel && (
-            <Text
-              as="label"
-              {...styles.label}
+            <ConditionalField.Label
               className={showRequiredStar ? 'required-star' : ''}
               dangerouslySetInnerHTML={{ __html: String(label) }}
             />
           )}
 
           {description && showDescription && (
-            <Box {...styles.description}>
+            <ConditionalField.Description>
               {description}
-            </Box>
+            </ConditionalField.Description>
           )}
-        </Box>
-        <Box
-          flex={fullWidth
-            ? {
-                base: 'none',
-                md: '0 0 auto',
-              }
-            : undefined}
-          w={fullWidth ? undefined : 'full'}
-          {...styles.fieldColumn}>
+        </ConditionalField.LabelColumn>
+        <ConditionalField.FieldColumn>
           {children}
-        </Box>
-      </Flex>
+        </ConditionalField.FieldColumn>
+      </ConditionalField.Layout>
       {errors}
       {help}
-    </Box>
+    </ConditionalField.Row>
   ))
 }

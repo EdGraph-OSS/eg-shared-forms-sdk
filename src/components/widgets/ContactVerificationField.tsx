@@ -9,6 +9,10 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
+import { contactVerificationRecipe } from '../../ui/recipes/contact-verification'
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 type ContactVerificationValue = {
   email?: string
@@ -25,30 +29,6 @@ type ContactVerificationFormContext = {
   maskedEmail?: string
   maskedPhone?: string
   onExecuteAction?: (action: string) => void
-}
-
-/** Pink "verification" card look used when the uiSchema provides no `customStyles`. */
-const DEFAULT_STYLES: SystemStyleObject = {
-  bg: '#fdeef0',
-  border: '1px solid #e8a3ad',
-  borderRadius: '12px',
-  padding: '20px 24px',
-}
-
-const BASE_FIELD = {
-  fontSize: '1rem',
-  minW: '390px',
-  borderRadius: '6px',
-  bg: 'white',
-  _dark: { bg: 'gray.800', color: 'gray.100', borderColor: 'gray.600' },
-  outline: 'none',
-} as const
-
-function invalidBorder(hasError: boolean) {
-  return {
-    border: hasError ? '2px solid red' : '2px solid #e9ecef',
-    _focus: { border: hasError ? '2px solid red' : '2px solid gray' },
-  }
 }
 
 /**
@@ -74,7 +54,8 @@ function invalidBorder(hasError: boolean) {
  */
 export default function ContactVerificationField(props: FieldProps) {
   const options = (props.uiSchema?.['ui:options'] ?? {}) as Record<string, unknown>
-  const styles = (options.customStyles as SystemStyleObject | undefined) ?? DEFAULT_STYLES
+  const recipeStyles = useRecipeStyles('contactVerification', contactVerificationRecipe)()
+  const styles = { ...recipeStyles.container, ...(options.customStyles as SystemStyleObject | undefined ?? {}) }
   const title = (typeof options.title === 'string' && options.title)
     || (typeof props.schema?.title === 'string' ? props.schema.title : '')
   const icon = typeof options.icon === 'string' ? options.icon : ''
@@ -122,16 +103,16 @@ export default function ContactVerificationField(props: FieldProps) {
     update({ ...value, phone: next === '' ? undefined : next })
   }
 
+  const emailFieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: emailHasError })
+  const phoneFieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: phoneHasError })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   return (
     <Field.Root className="eg-contact-verification-field" readOnly={props.readonly}>
       <Box
         w="full"
         my={2}
-        css={{
-          color: '#333',
-          _dark: { color: 'gray.100' },
-          ...styles,
-        }}
+        css={styles}
       >
         {title && (
           <Flex align="center" gap={2} mb={4}>
@@ -140,13 +121,7 @@ export default function ContactVerificationField(props: FieldProps) {
                 {icon}
               </Text>
             )}
-            <Text
-              as="h3"
-              fontWeight="700"
-              fontSize="1.125rem"
-              color="#1799a6"
-              _dark={{ color: 'teal.200' }}
-            >
+            <Text as="h3" css={recipeStyles.title}>
               {title}
             </Text>
           </Flex>
@@ -155,7 +130,7 @@ export default function ContactVerificationField(props: FieldProps) {
         {hasMaskedEmail && (
           <Flex flexDir="column" w="full">
             {maskedEmailLabel && (
-              <Text color="#333" _dark={{ color: 'gray.200' }} fontWeight="600" mb={1}>
+              <Text css={headerStyles} mb={1}>
                 {maskedEmailLabel}
               </Text>
             )}
@@ -165,10 +140,10 @@ export default function ContactVerificationField(props: FieldProps) {
               onChange={onEmailChange}
               placeholder="Enter the complete email address"
               disabled={isDisabled}
+              minW="390px"
               h="54px"
               padding="8px"
-              {...BASE_FIELD}
-              {...invalidBorder(emailHasError)}
+              css={emailFieldStyles}
             />
           </Flex>
         )}
@@ -192,7 +167,7 @@ export default function ContactVerificationField(props: FieldProps) {
         {hasMaskedPhone && (
           <Flex flexDir="column" w="full">
             {maskedPhoneLabel && (
-              <Text color="#333" _dark={{ color: 'gray.200' }} fontWeight="600" mb={1}>
+              <Text css={headerStyles} mb={1}>
                 {maskedPhoneLabel}
               </Text>
             )}
@@ -203,10 +178,10 @@ export default function ContactVerificationField(props: FieldProps) {
               onChange={onPhoneChange}
               placeholder="Enter the complete phone number"
               disabled={isDisabled}
+              minW="390px"
               h="54px"
               padding="8px"
-              {...BASE_FIELD}
-              {...invalidBorder(phoneHasError)}
+              css={phoneFieldStyles}
             />
           </Flex>
         )}

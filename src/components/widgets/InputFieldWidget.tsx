@@ -7,15 +7,10 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react'
-
-const BASE_FIELD = {
-  fontSize: '1rem',
-  minW: '390px',
-  borderRadius: '6px',
-  bg: 'white',
-  _dark: { bg: 'gray.800', color: 'gray.100', borderColor: 'gray.600' },
-  outline: 'none',
-} as const
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { inputHintRecipe } from '../../ui/recipes/input-hint'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 type TextFieldOptions = {
   multiline?: boolean
@@ -54,10 +49,9 @@ export default function InputFieldWidget(props: WidgetProps) {
     onChangeString(e.target.value)
   }
 
-  const invalidBorder = {
-    border: hasError ? '2px solid red' : '2px solid #e9ecef',
-    _focus: { border: hasError ? '2px solid red' : '2px solid gray' },
-  }
+  const fieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: hasError })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  const hintStyles = useRecipeStyles('inputHint', inputHintRecipe)({ exceeded: maxLength !== undefined && charCount >= maxLength })
 
   return (
     <Field.Root
@@ -71,12 +65,7 @@ export default function InputFieldWidget(props: WidgetProps) {
         mt={1}
       >
         {props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontWeight="600"
-            mb={1}
-          >
+          <Text css={headerStyles} mb={1}>
             {props.uiSchema?.['ui:header']}
           </Text>
         )}
@@ -89,12 +78,12 @@ export default function InputFieldWidget(props: WidgetProps) {
             onChange={onTextareaChange}
             maxLength={maxLength}
             rows={rows}
+            minW="390px"
             minH="100px"
             maxH="100px"
             padding="8px"
             resize="none"
-            {...BASE_FIELD}
-            {...invalidBorder}
+            css={fieldStyles}
           />
         ) : (
           <Input
@@ -104,30 +93,21 @@ export default function InputFieldWidget(props: WidgetProps) {
             value={valueStr}
             onChange={onInputChange}
             maxLength={maxLength}
+            minW="390px"
             h="54px"
             padding="8px"
-            {...BASE_FIELD}
-            {...invalidBorder}
+            css={fieldStyles}
           />
         )}
         {hasLengthLimit && (
           <Flex mt={1}>
             {hasMinLength && (
-              <Text
-                fontSize="xs"
-                color="gray.500"
-                _dark={{ color: 'gray.400' }}
-              >
+              <Text css={hintStyles.min}>
                 {`Minimum characters: ${minLength}`}
               </Text>
             )}
             {maxLength !== undefined && (
-              <Text
-                ml="auto"
-                fontSize="xs"
-                color={charCount >= maxLength ? 'red.500' : 'gray.500'}
-                _dark={{ color: charCount >= maxLength ? 'red.400' : 'gray.400' }}
-              >
+              <Text ml="auto" css={hintStyles.count}>
                 {`${charCount}/${maxLength}`}
               </Text>
             )}

@@ -6,14 +6,8 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react'
-
-/** Sensible amber "notice" look used when the uiSchema provides no `styles`. */
-const DEFAULT_STYLES: SystemStyleObject = {
-  bg: '#fff3cd',
-  borderLeft: '4px solid #ffc107',
-  borderRadius: '4px',
-  padding: '16px',
-}
+import { infoMessageRecipe } from '../../ui/recipes/info-message'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 /**
  * Purely presentational widget: renders a styled callout/notice from uiSchema
@@ -31,7 +25,8 @@ const DEFAULT_STYLES: SystemStyleObject = {
  */
 export default function InfoMessageWidget(props: WidgetProps) {
   const options = (props.options ?? {}) as Record<string, unknown>
-  const styles = (options.styles as SystemStyleObject | undefined) ?? DEFAULT_STYLES
+  const recipeStyles = useSingleRecipeStyles('infoMessage', infoMessageRecipe)()
+  const styles = { ...recipeStyles, ...(options.styles as SystemStyleObject | undefined ?? {}) }
   const preText = typeof options.preText === 'string' ? options.preText : ''
   const text = typeof options.text === 'string' ? options.text : ''
   const body = typeof options.body === 'string' ? options.body : ''
@@ -48,12 +43,7 @@ export default function InfoMessageWidget(props: WidgetProps) {
       <Box
         w="full"
         my={2}
-        css={{
-          color: '#333',
-          fontSize: '0.9375rem',
-          lineHeight: 1.6,
-          ...styles,
-        }}>
+        css={styles}>
         <Flex flexDir='row'>
           <Text>
             { preText && <Text as="span" fontWeight='700'>{preText}</Text> }

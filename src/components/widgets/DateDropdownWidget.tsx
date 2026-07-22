@@ -7,6 +7,10 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { dateDropdownRecipe } from '../../ui/recipes/date-dropdown'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 type DateDropdownOptions = {
   /** Earliest year offered in the Year dropdown. */
@@ -37,14 +41,6 @@ const MONTH_LABELS = [
   'November',
   'December',
 ]
-
-const BASE_FIELD = {
-  fontSize: '1rem',
-  borderRadius: '6px',
-  bg: 'white',
-  _dark: { bg: 'gray.800', color: 'gray.100', borderColor: 'gray.600' },
-  outline: 'none',
-} as const
 
 const pad2 = (n: number) => String(n).padStart(2, '0')
 
@@ -158,11 +154,10 @@ export default function DateDropdownWidget(props: WidgetProps) {
   const dayCount = parts.year && parts.month ? daysInMonth(parts.year, parts.month) : 31
   const days = Array.from({ length: dayCount }, (_, i) => i + 1)
 
-  const fieldCss = {
-    ...BASE_FIELD,
-    borderColor: hasError ? 'red.500' : '#e9ecef',
-    ...(customStyles ?? {}),
-  }
+  const fieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: hasError })
+  const fieldCss = { ...fieldStyles, ...(customStyles ?? {}) }
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  const columnLabelStyles = useRecipeStyles('dateDropdown', dateDropdownRecipe)().columnLabel
 
   return (
     <Field.Root
@@ -176,12 +171,7 @@ export default function DateDropdownWidget(props: WidgetProps) {
         mt={1}
       >
         {props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontWeight="600"
-            mb={2}
-          >
+          <Text css={headerStyles} mb={2}>
             {props.uiSchema?.['ui:header']}
           </Text>
         )}
@@ -189,7 +179,7 @@ export default function DateDropdownWidget(props: WidgetProps) {
         <Flex gap={4} w="full" flexWrap={{ base: 'wrap', sm: 'nowrap' }}>
           {/* Year */}
           <Flex flexDir="column" flex="1" minW="110px">
-            <Text fontSize="14px" fontWeight="500" mb={1} color="#555" _dark={{ color: 'gray.300' }}>
+            <Text css={columnLabelStyles} mb={1}>
               Year
             </Text>
             <NativeSelect.Root size="lg" disabled={isDisabled}>
@@ -198,7 +188,6 @@ export default function DateDropdownWidget(props: WidgetProps) {
                 value={parts.year ?? ''}
                 onChange={onYearChange}
                 h="54px"
-                borderWidth="2px"
                 css={fieldCss}
               >
                 {years.map(y => (
@@ -211,7 +200,7 @@ export default function DateDropdownWidget(props: WidgetProps) {
 
           {/* Month */}
           <Flex flexDir="column" flex="1" minW="110px">
-            <Text fontSize="14px" fontWeight="500" mb={1} color="#555" _dark={{ color: 'gray.300' }}>
+            <Text css={columnLabelStyles} mb={1}>
               Month
             </Text>
             <NativeSelect.Root size="lg" disabled={!monthEnabled}>
@@ -220,7 +209,6 @@ export default function DateDropdownWidget(props: WidgetProps) {
                 value={parts.month ?? ''}
                 onChange={onMonthChange}
                 h="54px"
-                borderWidth="2px"
                 css={fieldCss}
               >
                 {MONTH_LABELS.map((label, i) => (
@@ -233,7 +221,7 @@ export default function DateDropdownWidget(props: WidgetProps) {
 
           {/* Day */}
           <Flex flexDir="column" flex="1" minW="90px">
-            <Text fontSize="14px" fontWeight="500" mb={1} color="#555" _dark={{ color: 'gray.300' }}>
+            <Text css={columnLabelStyles} mb={1}>
               Day
             </Text>
             <NativeSelect.Root size="lg" disabled={!dayEnabled}>
@@ -242,7 +230,6 @@ export default function DateDropdownWidget(props: WidgetProps) {
                 value={parts.day ?? ''}
                 onChange={onDayChange}
                 h="54px"
-                borderWidth="2px"
                 css={fieldCss}
               >
                 {days.map(d => (

@@ -7,6 +7,8 @@ import {
   List,
   Text,
 } from '@chakra-ui/react'
+import { infoCardRecipe } from '../../ui/recipes/info-card'
+import { useRecipeStyles } from '../../ui/use-recipe-styles'
 
 type InfoCardRow = {
   /** Left-hand label shown in bold (e.g. "Name:"). */
@@ -20,14 +22,6 @@ type InfoCardBlock =
   | { type: 'paragraph', text: string }
   | { type: 'list', ordered: boolean, items: string[] }
   | { type: 'rows', rows: InfoCardRow[] }
-
-/** Teal "summary card" look used when the uiSchema provides no `customStyles`. */
-const DEFAULT_STYLES: SystemStyleObject = {
-  bg: '#e8f7f8',
-  border: '1px solid #4bbcc4',
-  borderRadius: '12px',
-  padding: '20px 24px',
-}
 
 /** Coerce loosely-typed ui:options rows into a clean {label, value}[] list. */
 function parseRows(raw: unknown): InfoCardRow[] {
@@ -144,7 +138,8 @@ function parseContent(raw: unknown): InfoCardBlock[] {
  */
 export default function InfoCardWidget(props: WidgetProps) {
   const options = (props.options ?? {}) as Record<string, unknown>
-  const styles = (options.customStyles as SystemStyleObject | undefined) ?? DEFAULT_STYLES
+  const recipeStyles = useRecipeStyles('infoCard', infoCardRecipe)()
+  const styles = { ...recipeStyles.container, ...(options.customStyles as SystemStyleObject | undefined ?? {}) }
   // Prefer an explicit ui:options.title, else fall back to the schema title RJSF passes as `label`.
   const title = (typeof options.title === 'string' && options.title)
     || (typeof props.label === 'string' ? props.label : '')
@@ -163,11 +158,7 @@ export default function InfoCardWidget(props: WidgetProps) {
       <Box
         w="full"
         my={2}
-        css={{
-          color: '#333',
-          _dark: { color: 'gray.100' },
-          ...styles,
-        }}
+        css={styles}
       >
         {title && (
           <Flex align="center" gap={2} mb={hasBody ? 4 : 0}>
@@ -176,13 +167,7 @@ export default function InfoCardWidget(props: WidgetProps) {
                 {icon}
               </Text>
             )}
-            <Text
-              as="h3"
-              fontWeight="700"
-              fontSize="1.125rem"
-              color="#1799a6"
-              _dark={{ color: 'teal.200' }}
-            >
+            <Text as="h3" css={recipeStyles.title}>
               {title}
             </Text>
           </Flex>

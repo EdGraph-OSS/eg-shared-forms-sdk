@@ -21,6 +21,8 @@ import {
   useMemo,
   useRef,
 } from 'react'
+import { selectControlRecipe } from '../../ui/recipes/select-control'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function SelectFieldWidget(props: WidgetProps) {
   const { id, options, label, hideLabel, placeholder, multiple, required, disabled, readonly, value, autofocus, onChange, onBlur, onFocus, rawErrors = [], schema, uiSchema } = props
@@ -105,6 +107,8 @@ export default function SelectFieldWidget(props: WidgetProps) {
 
   const containerRef = useRef(null)
 
+  const controlStyles = useSingleRecipeStyles('selectControl', selectControlRecipe)({ invalid: !!error })
+
   return (
     <Field.Root
       invalid={!!error}
@@ -126,16 +130,12 @@ export default function SelectFieldWidget(props: WidgetProps) {
       >
         <Select.HiddenSelect />
         <Select.Control
-          border={error ? '2px solid red' : '2px solid #e9ecef'}
-          fontSize="1rem"
           px={4}
           py={1}
           minWidth="390px"
           lineHeight="15px"
           h="54px"
-          borderRadius="6px"
-          bg="white"
-          _dark={{ bg: 'gray.800', borderColor: error ? 'red.500' : 'gray.600' }}
+          css={controlStyles}
         >
           <Select.Trigger>
             <Select.ValueText

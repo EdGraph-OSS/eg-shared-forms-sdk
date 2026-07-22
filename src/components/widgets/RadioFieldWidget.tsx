@@ -15,6 +15,9 @@ import {
   ariaDescribedByIds,
   optionId,
 } from '@rjsf/utils'
+import { radioFieldRecipe } from '../../ui/recipes/radio-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function RadioWidget<T = any, S extends StrictRJSFSchema = RJSFSchema, F extends FormContextType = any>({
   id,
@@ -29,24 +32,19 @@ export default function RadioWidget<T = any, S extends StrictRJSFSchema = RJSFSc
   const { enumOptions, enumDisabled, emptyValue } = options
   const error = rawErrors ? rawErrors.join(', ') : ''
 
+  const styles = useRecipeStyles('radioField', radioFieldRecipe)()
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   return (
     <Field.Root className='eg-radio-field-widget' required={required} readOnly={readonly} invalid={!!error}>
 
       { uiSchema?.['ui:header'] && (
-        <Text
-          color="#333"
-          _dark={{ color: 'gray.200' }}
-          fontWeight="600"
-          mb="16px"
-        >
+        <Text css={headerStyles} mb="16px">
           { uiSchema?.['ui:header'] }
         </Text>
       )}
 
-      <Flex
-        bg='white'
-        flexDir="column"
-        w="full">
+      <Flex css={styles.container}>
         <RadioGroup.Root
           value={value ?? ''}
           name={id}
@@ -68,16 +66,8 @@ export default function RadioWidget<T = any, S extends StrictRJSFSchema = RJSFSc
                     id={optionId(id, index)}
                   >
                     <RadioGroup.ItemHiddenInput />
-                    <RadioGroup.ItemIndicator
-                      cursor="pointer"
-                      color="white"
-                      colorScheme="accent"
-                      colorPalette="blue"
-                      border="1px solid transparent"
-                      borderColor="gray.300 !important"
-                      ringColor="var(--eg-accent)"
-                    />
-                    <RadioGroup.ItemText cursor="pointer" fontSize={14} color="gray.700" _dark={{ color: 'gray.100' }}>{option.label}</RadioGroup.ItemText>
+                    <RadioGroup.ItemIndicator css={styles.indicator} />
+                    <RadioGroup.ItemText css={styles.text}>{option.label}</RadioGroup.ItemText>
                   </RadioGroup.Item>
                 </Flex>
               )

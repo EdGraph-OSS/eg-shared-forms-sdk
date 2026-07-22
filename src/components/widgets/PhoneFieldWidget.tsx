@@ -6,15 +6,9 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
-
-const BASE_FIELD = {
-  fontSize: '1rem',
-  minW: '390px',
-  borderRadius: '6px',
-  bg: 'white',
-  _dark: { bg: 'gray.800', color: 'gray.100', borderColor: 'gray.600' },
-  outline: 'none',
-} as const
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function PhoneFieldWidget(props: WidgetProps) {
   const error = props.rawErrors ? props.rawErrors.join(', ') : ''
@@ -28,10 +22,8 @@ export default function PhoneFieldWidget(props: WidgetProps) {
     props.onChange(next === '' ? undefined : next)
   }
 
-  const invalidBorder = {
-    border: hasError ? '2px solid red' : '2px solid #e9ecef',
-    _focus: { border: hasError ? '2px solid red' : '2px solid gray' },
-  }
+  const fieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: hasError })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
 
   return (
     <Field.Root
@@ -45,12 +37,7 @@ export default function PhoneFieldWidget(props: WidgetProps) {
         mt={1}
       >
         {props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontWeight="600"
-            mb={1}
-          >
+          <Text css={headerStyles} mb={1}>
             {props.uiSchema?.['ui:header']}
           </Text>
         )}
@@ -63,10 +50,10 @@ export default function PhoneFieldWidget(props: WidgetProps) {
           value={valueStr}
           onChange={onInputChange}
           placeholder={props.placeholder}
+          minW="390px"
           h="54px"
           padding="8px"
-          {...BASE_FIELD}
-          {...invalidBorder}
+          css={fieldStyles}
         />
       </Flex>
     </Field.Root>

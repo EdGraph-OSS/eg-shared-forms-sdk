@@ -1,86 +1,15 @@
 import type { ObjectFieldTemplateProps } from '@rjsf/utils'
 import {
   Box,
-  Flex,
   Heading,
   Stack,
-  Text,
 } from '@chakra-ui/react'
 import HtmlFieldWidget from '../widgets/HtmlFieldWidget'
 import ImageFieldWidget from '../widgets/ImageFieldWidget'
-import { colors } from '../../ui'
-
-const styles = {
-  rootTitle: {
-    fontSize: '2xl',
-    fontWeight: 'bold',
-    color: '#1A365D',
-    _dark: { color: 'gray.100' },
-    mb: 4,
-    mt: 0,
-  },
-  rootDescription: {
-    fontSize: 'sm',
-    lineHeight: '1.6',
-    mb: 4,
-    color: 'gray.600',
-    _dark: { color: 'gray.300' },
-  },
-  customFieldContainer: {
-    gap: 1,
-    align: 'center',
-    justify: 'space-between',
-    flexWrap: 'wrap',
-    borderBottom: '1px solid',
-    borderColor: 'gray.200',
-    _dark: { borderColor: 'gray.600' },
-    py: 3,
-  },
-  customFieldDescription: {
-    fontSize: 'sm',
-    fontWeight: 'normal',
-    color: 'gray.500',
-    _dark: { color: 'gray.300' },
-  },
-  sectionContainer: {
-    mb: 8,
-    borderRadius: 'sm',
-    overflow: 'hidden',
-    borderWidth: '1px',
-    borderColor: 'primary',
-    _dark: { borderColor: 'gray.600' },
-  },
-  sectionHeader: {
-    bg: colors.primary.light,
-    _dark: { bg: colors.primary.dark },
-    color: 'white',
-    px: 2,
-    py: 2,
-    align: 'center',
-    justify: 'space-between',
-    flexWrap: 'wrap',
-  },
-  sectionDescription: {
-    fontSize: 'sm',
-    color: 'whiteAlpha.900',
-    fontWeight: 'normal',
-  },
-  sectionSubHeading: {
-    color: 'white',
-    background: colors.primary.dark,
-    _dark: { color: 'gray.100', background: 'gray.700' },
-    px: 2,
-    py: 1,
-    fontSize: 'sm',
-  },
-  sectionProperties: {
-    bg: 'white',
-    _dark: { bg: 'gray.800' },
-    px: 4,
-    py: 2,
-    minH: '100px',
-  },
-} as const
+import { SectionDomain } from '../../ui/recipes/section-domain'
+import { TitleHeading } from '../../ui/recipes/title-heading'
+import { FormDescription } from '../../ui/recipes/form-description'
+import { ObjectFieldCustomContainer } from '../../ui/recipes/object-field-custom'
 
 export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   const { title, description, properties, registry, uiSchema } = props
@@ -97,17 +26,16 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
           <img src={formImage} className="max-h-32 max-w-full mb-2" alt="Form Image" />
         )}
         {title && (
-          <Heading
+          <TitleHeading
             className='eg-form-root-title'
-            as="h1"
-            {...styles.rootTitle}
+            variant="root"
             dangerouslySetInnerHTML={{ __html: String(title) }}
           />
         )}
         {description && (
           typeof description === 'string'
             ? (
-              <Text {...styles.rootDescription} className="eg-form-root-description HtmlContent" dangerouslySetInnerHTML={{ __html: String(description) }}></Text>
+              <FormDescription variant="root" className="eg-form-root-description HtmlContent" dangerouslySetInnerHTML={{ __html: String(description) }}></FormDescription>
             )
             : description
         )}
@@ -126,9 +54,7 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
 
   if (props.uiSchema?.['ui:widget'] && ['CurrentUserName', 'SectionPicker'].includes(props.uiSchema?.['ui:widget'].toString())) {
     return (
-      <Flex
-        className='eg-object-field-template-custom'
-        {...styles.customFieldContainer}>
+      <ObjectFieldCustomContainer className='eg-object-field-template-custom'>
         <Box flex={1}>
           {showHeading && (
             <Heading className='eg-object-field-template-heading' as="h2" size="lg" fontWeight="bold" dangerouslySetInnerHTML={{ __html: String(title) }} />
@@ -137,8 +63,8 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
           {description && (
             typeof description === 'string'
               ? (
-                <Text
-                  {...styles.customFieldDescription}
+                <FormDescription
+                  variant="custom"
                   className="eg-object-field-template-description HtmlContent text-gray-400"
                   dangerouslySetInnerHTML={{ __html: String(description) }}
                 />
@@ -151,7 +77,7 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
             {element.content}
           </div>
         ))}
-      </Flex>
+      </ObjectFieldCustomContainer>
     )
   }
 
@@ -162,21 +88,19 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   const orderedKeys = fullOrder ?? properties.map(p => p.name)
 
   return (
-    <Box className="eg-section-domain w-full" {...styles.sectionContainer}>
-      <Flex {...styles.sectionHeader}>
+    <SectionDomain.Root className="eg-section-domain w-full" mb={8}>
+      <SectionDomain.Header>
         <Box flex="1" minW={0}>
           {showHeading && (
-            <Heading
-              className='eg-section-domain-heading' as="h2" size="lg" fontWeight="bold"
-              color="white"
+            <SectionDomain.Heading
+              className='eg-section-domain-heading'
               dangerouslySetInnerHTML={{ __html: String(title) }}
             />
           )}
           {description && (
             typeof description === 'string'
               ? (
-                <Text
-                  {...styles.sectionDescription}
+                <SectionDomain.Description
                   className="eg-section-domain-description HtmlContent"
                   dangerouslySetInnerHTML={{ __html: String(description) }}
                 />
@@ -184,15 +108,14 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
               : description
           )}
         </Box>
-      </Flex>
+      </SectionDomain.Header>
       {subHeading && (
-        <Box
+        <SectionDomain.SubHeading
           className="eg-section-domain-subheading HtmlContent"
-          {...styles.sectionSubHeading}
           dangerouslySetInnerHTML={{ __html: String(subHeading) }}
         />
       )}
-      <Box className='eg-section-domain-properties' {...styles.sectionProperties}>
+      <SectionDomain.Properties className='eg-section-domain-properties'>
         <Stack gap={0} className="eg-section-domain-properties rjsf-section-properties">
           {orderedKeys.map((key) => {
             if (propertyMap[key]) {
@@ -218,7 +141,7 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
             return null
           })}
         </Stack>
-      </Box>
-    </Box>
+      </SectionDomain.Properties>
+    </SectionDomain.Root>
   )
 }

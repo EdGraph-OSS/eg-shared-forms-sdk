@@ -15,7 +15,8 @@ import TitleFieldTemplate from './components/templates/TitleFieldTemplate'
 import { ComponentType, IForm, IFormAggregated, IFormComponent, IFormQuestion, IFormSection } from './models/form'
 import { CustomFieldTemplate, DescriptionFieldTemplate, ErrorListTemplate, FieldErrorTemplate, ObjectFieldTemplate, SubmitButton } from './components/templates'
 import { CheckboxCardsField, ContactVerificationField, CurrentUserName, DateDropdownWidget, DateFieldWidget, EmailFieldWidget, HtmlFieldWidget, ImageFieldWidget, InfoCardWidget, InfoMessageWidget, InputFieldWidget, NumberFieldWidget, OrFieldWidget, PhoneFieldWidget, RadioCardsField, RadioFieldWidget, ScoringFieldWidget, SectionPicker, SelectFieldWidget, VerificationCodeWidget } from './components/widgets'
-import { Provider } from './ui'
+import { Provider, sectionDomainRecipe, errorListRecipe, conditionalFieldRecipe, checkboxFieldRecipe, textFieldRecipe, infoMessageRecipe, scoringFieldRecipe, infoCardRecipe } from './ui'
+import type { RecipesRegistry, SlotRecipesRegistry } from './ui'
 import { aggregateForm } from './utils/form'
 import React from 'react'
 import { humanizeRjsfErrors } from './utils'
@@ -23,19 +24,6 @@ import { createConditionalRequiredCustomValidate } from './utils/conditionalRequ
 import sampleForm from "./sample-form"
 import { Button } from '@chakra-ui/react'
 const { form, sections, questions } = sampleForm
-
-function toggleDarkMode() {
-  const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
-  localStorage.setItem("selectedDarkMode", isDarkMode ? "false" : "true")
-  window.location.reload()
-}
-
-interface Props {
-  form?: IFormAggregated
-  readonly?: boolean
-  data?: any
-  onSubmit?: (data: any) => void
-}
 
 function App(props: Props) {
   const components: IFormComponent[] = [
@@ -135,7 +123,9 @@ function App(props: Props) {
   return (
     <div>
       Form:
-      <Provider>
+      <Provider
+        recipes={getRecipeOverrides()}
+        slotRecipes={getSlotRecipeOverrides()}>
         <Button
           onClick={toggleDarkMode} colorScheme="blue">Toggle Dark Mode</Button>
         <Form
@@ -163,3 +153,206 @@ function App(props: Props) {
 }
 
 export default App
+
+// Methods
+function toggleDarkMode() {
+  const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
+  localStorage.setItem("selectedDarkMode", isDarkMode ? "false" : "true")
+  window.location.reload()
+}
+
+const brandSectionDomainOverride: SlotRecipesRegistry['sectionDomain'] = {
+  ...sectionDomainRecipe,
+  base: {
+    ...sectionDomainRecipe.base,
+    root: {
+      borderRadius: 'sm',
+      borderWidth: '0'
+    },
+    header: {
+      ...sectionDomainRecipe.base?.header,
+      bg: 'blue.100',
+      _dark: { bg: 'purple.800' },
+    },
+    heading: {
+      ...sectionDomainRecipe.base?.heading,
+      color: 'black',
+    },
+    subHeading: {
+      color: "green",
+      bg: 'white'
+    },
+    description: {
+      ...sectionDomainRecipe.base?.description,
+      color: 'black',
+    },
+  },
+}
+
+const brandSubmitButtonOverride: RecipesRegistry['submitButton'] = {
+  base: {
+    bg: 'purple.700',
+    _dark: { bg: 'purple.800', borderColor: 'purple.500' },
+  },
+}
+
+const objectFieldCustomContainerOverride: RecipesRegistry['objectFieldCustomContainer'] = {
+  base: {
+    borderBottom: '10px solid',
+    borderColor: 'gray.200',
+  }
+}
+
+const brandFieldErrorOverride: RecipesRegistry['fieldError'] = {
+  base: {
+    color: 'red.800',
+    _dark: { color: 'purple.300' },
+  },
+}
+
+const brandTitleHeadingOverride: RecipesRegistry['titleHeading'] = {
+  base: {
+    color: 'red.500',
+    _dark: { color: 'purple.100' },
+  },
+}
+
+const brandFormDescriptionOverride: RecipesRegistry['formDescription'] = {
+  base: {
+    color: 'blue.800',
+    _dark: { color: 'purple.200' },
+  },
+}
+
+const brandErrorListOverride: SlotRecipesRegistry['errorList'] = {
+  ...errorListRecipe,
+  base: {
+    ...errorListRecipe.base,
+    container: {
+      ...errorListRecipe.base?.container,
+      borderColor: 'purple.300',
+      bg: 'purple.50',
+      _dark: { borderColor: 'purple.700', bg: 'purple.950' },
+    },
+    heading: {
+      ...errorListRecipe.base?.heading,
+      color: 'purple.700',
+      _dark: { color: 'purple.200' },
+    },
+  },
+}
+
+const brandConditionalFieldOverride: SlotRecipesRegistry['conditionalField'] = {
+  ...conditionalFieldRecipe,
+  base: {
+    ...conditionalFieldRecipe.base,
+    label: {
+      ...conditionalFieldRecipe.base?.label,
+      color: 'purple.700',
+      _dark: { color: 'purple.200' },
+    },
+  },
+}
+
+const brandIconBadgeOverride: RecipesRegistry['iconBadge'] = {
+  base: {
+    bg: 'purple.500',
+  },
+}
+
+const brandCheckboxFieldOverride: SlotRecipesRegistry['checkboxField'] = {
+  ...checkboxFieldRecipe,
+  base: {
+    ...checkboxFieldRecipe.base,
+    control: {
+      ...checkboxFieldRecipe.base?.control,
+      colorPalette: 'purple',
+    },
+  },
+}
+
+// Widget recipe example (plain `recipe`) — textFieldRecipe backs InputFieldWidget, EmailFieldWidget,
+// PhoneFieldWidget and NumberFieldWidget, so overriding it re-skins all of them at once.
+const brandTextFieldOverride: RecipesRegistry['textField'] = {
+  base: {
+    ...textFieldRecipe.base,
+    borderRadius: '10px',
+    _dark: { ...textFieldRecipe.base?._dark, bg: 'purple.950' },
+  },
+}
+
+// Widget recipe example (plain `recipe`) — infoMessageRecipe backs InfoMessageWidget.
+const brandInfoMessageOverride: RecipesRegistry['infoMessage'] = {
+  base: {
+    ...infoMessageRecipe.base,
+    bg: 'purple.50',
+    borderLeft: '4px solid',
+    borderColor: 'purple.500',
+    _dark: { bg: 'purple.950', borderColor: 'purple.400' },
+  },
+}
+
+// Widget slot recipe example (`slot recipe`) — scoringFieldRecipe backs ScoringFieldWidget.
+const brandScoringFieldOverride: SlotRecipesRegistry['scoringField'] = {
+  ...scoringFieldRecipe,
+  base: {
+    ...scoringFieldRecipe.base,
+    header: {
+      ...scoringFieldRecipe.base?.header,
+      color: 'purple.700',
+      _dark: { color: 'purple.200' },
+    },
+  },
+}
+
+const brandInfoCardOverride: SlotRecipesRegistry['infoCard'] = {
+  ...infoCardRecipe,
+  base: {
+    ...infoCardRecipe.base,
+    container: {
+      ...infoCardRecipe.base?.container,
+      borderColor: 'purple.300',
+      _dark: { bg: 'purple.950', borderColor: 'purple.700' },
+    },
+    title: {
+      ...infoCardRecipe.base?.title,
+      color: 'purple.700',
+      _dark: { color: 'purple.200' },
+    },
+  },
+}
+
+function getRecipeOverrides() {
+  const recipeOverrides: Partial<RecipesRegistry> = {
+    fieldError: brandFieldErrorOverride,
+    submitButton: brandSubmitButtonOverride,
+    titleHeading: brandTitleHeadingOverride,
+    formDescription: brandFormDescriptionOverride,
+    objectFieldCustomContainer: objectFieldCustomContainerOverride,
+    iconBadge: brandIconBadgeOverride,
+    textField: brandTextFieldOverride,
+    infoMessage: brandInfoMessageOverride,
+  }
+
+  return recipeOverrides
+}
+
+function getSlotRecipeOverrides() {
+  const slotRecipeOverrides: Partial<SlotRecipesRegistry> = {
+    sectionDomain: brandSectionDomainOverride,
+    errorList: brandErrorListOverride,
+    conditionalField: brandConditionalFieldOverride,
+    checkboxField: brandCheckboxFieldOverride,
+    scoringField: brandScoringFieldOverride,
+    infoCard: brandInfoCardOverride,
+  }
+
+  return slotRecipeOverrides
+}
+
+interface Props {
+  form?: IFormAggregated
+  readonly?: boolean
+  data?: any
+  onSubmit?: (data: any) => void
+}

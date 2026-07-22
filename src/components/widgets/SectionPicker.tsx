@@ -14,6 +14,10 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { selectControlRecipe } from '../../ui/recipes/select-control'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { sectionPickerRecipe } from '../../ui/recipes/section-picker'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 function isObject(item: any): boolean {
   return item && typeof item === 'object' && !Array.isArray(item)
@@ -387,6 +391,12 @@ export default function SectionPicker(props: FieldProps) {
     itemToValue: item => item?.value?.toString() || '',
   })
 
+  const schoolControlStyles = useSingleRecipeStyles('selectControl', selectControlRecipe)({ invalid: schoolInvalid, readonly })
+  const teacherControlStyles = useSingleRecipeStyles('selectControl', selectControlRecipe)({ invalid: teacherInvalid, readonly })
+  const sectionControlStyles = useSingleRecipeStyles('selectControl', selectControlRecipe)({ invalid: sectionInvalid, readonly })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  const pickerStyles = useRecipeStyles('sectionPicker', sectionPickerRecipe)()
+
   return (
     <Field.Root
       invalid={hasAnyError}
@@ -408,8 +418,7 @@ export default function SectionPicker(props: FieldProps) {
       >
         <Stack flex={1} alignItems="start">
           <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
+            css={headerStyles}
             mt={props.schema.title && 4}
             display="flex"
             alignItems="center"
@@ -424,12 +433,7 @@ export default function SectionPicker(props: FieldProps) {
         </Stack>
         <Flex flex={1} flexDir="column" w="full" mt={1}>
           {props.uiSchema?.['ui:header'] && (
-            <Text
-              color="#333"
-              _dark={{ color: 'gray.200' }}
-              fontWeight="600"
-              mb={1}
-            >
+            <Text css={headerStyles} mb={1}>
               {props.uiSchema?.['ui:header']}
             </Text>
           )}
@@ -437,12 +441,10 @@ export default function SectionPicker(props: FieldProps) {
           {/* School Dropdown */}
           <Flex flexDir="column" mb={3}>
             <Text
+              css={pickerStyles.groupLabel}
               display="flex"
               alignItems="center"
               mb={1}
-              fontSize="0.875rem"
-              color="#666"
-              _dark={{ color: 'gray.400' }}
               dangerouslySetInnerHTML={{ __html: String(props.schema.title) }}
             />
             <Select.Root
@@ -458,15 +460,11 @@ export default function SectionPicker(props: FieldProps) {
             >
               <Select.HiddenSelect />
               <Select.Control
-                border={schoolInvalid ? '2px solid red' : '2px solid #e9ecef'}
-                fontSize="1rem"
                 px={4}
                 py={1}
                 lineHeight="15px"
                 h="54px"
-                borderRadius="6px"
-                bg={readonly ? '#f5f5f5' : 'white'}
-                _dark={{ bg: readonly ? 'gray.700' : 'gray.800', color: 'gray.100', borderColor: teacherInvalid ? 'red.500' : 'gray.600' }}
+                css={schoolControlStyles}
               >
                 <Select.Trigger>
                   <Select.ValueText placeholder="Select school" />
@@ -500,7 +498,7 @@ export default function SectionPicker(props: FieldProps) {
 
           {/* Teacher Dropdown */}
           <Flex flexDir="column" mb={3}>
-            <Text mb={1} fontSize="0.875rem" color="#666" _dark={{ color: 'gray.400' }}>
+            <Text css={pickerStyles.groupLabel} mb={1}>
               Teacher
             </Text>
             <Select.Root
@@ -515,15 +513,11 @@ export default function SectionPicker(props: FieldProps) {
             >
               <Select.HiddenSelect />
               <Select.Control
-                border={teacherInvalid ? '2px solid red' : '2px solid #e9ecef'}
-                fontSize="1rem"
                 px={4}
                 py={1}
                 lineHeight="15px"
                 h="54px"
-                borderRadius="6px"
-                bg={readonly ? '#f5f5f5' : 'white'}
-                _dark={{ bg: readonly ? 'gray.700' : 'gray.800', color: 'gray.100', borderColor: sectionInvalid ? 'red.500' : 'gray.600' }}
+                css={teacherControlStyles}
               >
                 <Select.Trigger>
                   <Select.ValueText placeholder="Select teacher" />
@@ -557,7 +551,7 @@ export default function SectionPicker(props: FieldProps) {
 
           {/* Section Dropdown */}
           <Flex flexDir="column">
-            <Text mb={1} fontSize="0.875rem" color="#666" _dark={{ color: 'gray.400' }}>
+            <Text css={pickerStyles.groupLabel} mb={1}>
               Section
             </Text>
             <Select.Root
@@ -572,15 +566,11 @@ export default function SectionPicker(props: FieldProps) {
             >
               <Select.HiddenSelect />
               <Select.Control
-                border={sectionInvalid ? '2px solid red' : '2px solid #e9ecef'}
-                fontSize="1rem"
                 px={4}
                 py={1}
                 lineHeight="15px"
                 h="54px"
-                borderRadius="6px"
-                bg={readonly ? '#f5f5f5' : 'white'}
-                _dark={{ bg: readonly ? 'gray.700' : 'gray.800', color: 'gray.100', borderColor: schoolInvalid ? 'red.500' : 'gray.600' }}
+                css={sectionControlStyles}
               >
                 <Select.Trigger>
                   <Select.ValueText placeholder="Select section" />
@@ -609,7 +599,7 @@ export default function SectionPicker(props: FieldProps) {
             </Select.Root>
           </Flex>
           {hasAnyError && (
-            <Text mt={2} color="red.500" _dark={{ color: 'red.300' }} fontSize="sm">
+            <Text mt={2} css={pickerStyles.error}>
               {displayError}
             </Text>
           )}

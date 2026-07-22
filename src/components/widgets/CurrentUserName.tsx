@@ -6,6 +6,9 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function CurrentUserName(props: WidgetProps) {
   const error = props.rawErrors ? props.rawErrors.join(', ') : ''
@@ -14,6 +17,9 @@ export default function CurrentUserName(props: WidgetProps) {
     const valChanged = e.target.value === '' ? undefined : e.target.value
     props.onChange(valChanged)
   }
+
+  const fieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: !!error })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
 
   return (
     <Field.Root
@@ -36,12 +42,7 @@ export default function CurrentUserName(props: WidgetProps) {
         mt={1}
       >
         { props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontWeight="600"
-            mb={1}
-          >
+          <Text css={headerStyles} mb={1}>
             { props.uiSchema?.['ui:header'] }
           </Text>
         )}
@@ -54,16 +55,9 @@ export default function CurrentUserName(props: WidgetProps) {
           disabled
           value={props.defaultValue ?? props.value}
           onChange={onChange}
-          fontSize="1rem"
           padding="15px"
           h="54px"
-          border={error ? '2px solid red' : '2px solid #e9ecef'}
-          borderRadius="6px"
-          bg="white"
-          _dark={{ bg: 'gray.800', color: 'gray.100', borderColor: error ? 'red.500' : 'gray.600' }}
-          outline="none"
-          _focus={{ border: error ? '2px solid red' : `2px solid gray` }}
-          _focusVisible={{ borderColor: error ? 'red.500' : 'gray.500' }}
+          css={fieldStyles}
         />
       </Flex>
     </Field.Root>

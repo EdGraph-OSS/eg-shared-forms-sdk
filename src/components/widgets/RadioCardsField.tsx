@@ -2,11 +2,14 @@ import type { FieldProps } from '@rjsf/utils'
 import type { ReactNode } from 'react'
 import {
   Field,
-  Flex,
   RadioCard,
   Text,
   VStack,
 } from '@chakra-ui/react'
+import { IconBadge } from '../../ui/recipes/icon-badge'
+import { choiceCardRecipe } from '../../ui/recipes/choice-card'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 /** A single selectable card. Mirrors `RadioCardItem` in models/form.ts. */
 type RadioCardItem = {
@@ -101,26 +104,6 @@ function deepestSelected(cards: RadioCardItem[], value: RadioCardsValue): string
   return best
 }
 
-/** Teal circular badge holding the card's emoji/icon (matches the icons in the design). */
-function IconBadge({ children, size }: { children: ReactNode, size: string }) {
-  return (
-    <Flex
-      align="center"
-      justify="center"
-      flexShrink={0}
-      w={size}
-      h={size}
-      borderRadius="full"
-      bg="teal.400"
-      color="white"
-      fontSize={`calc(${size} / 2)`}
-      lineHeight={1}
-    >
-      {children}
-    </Flex>
-  )
-}
-
 /**
  * Single-select cards backed by Chakra UI v3's RadioCard. Each card shows an
  * icon, a title and a description; cards with `subItems` reveal a nested,
@@ -181,8 +164,11 @@ export default function RadioCardsField(props: FieldProps) {
     props.onChange(next, props.fieldPathId.path)
   }
 
+  const choiceCardStyles = useRecipeStyles('choiceCard', choiceCardRecipe)
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   function renderCard(item: RadioCardItem, sub: boolean): ReactNode {
-    const badgeSize = sub ? '32px' : '40px'
+    const cardStyles = choiceCardStyles({ sub })
     return (
       <RadioCard.Item
         key={item.value}
@@ -196,13 +182,13 @@ export default function RadioCardsField(props: FieldProps) {
           p={sub ? 3 : 4}
           borderColor={hasError ? 'red.500' : undefined}
         >
-          {item.icon && <IconBadge size={badgeSize}>{item.icon}</IconBadge>}
+          {item.icon && <IconBadge size={sub ? 'sm' : 'md'}>{item.icon}</IconBadge>}
           <RadioCard.ItemContent>
-            <RadioCard.ItemText fontWeight="700" fontSize={sub ? '15px' : '16px'}>
+            <RadioCard.ItemText css={cardStyles.label}>
               {item.title}
             </RadioCard.ItemText>
             {item.description && (
-              <RadioCard.ItemDescription color="gray.500" _dark={{ color: 'gray.400' }}>
+              <RadioCard.ItemDescription css={cardStyles.description}>
                 {item.description}
               </RadioCard.ItemDescription>
             )}
@@ -221,12 +207,7 @@ export default function RadioCardsField(props: FieldProps) {
       invalid={hasError}
     >
       {props.uiSchema?.['ui:header'] && (
-        <Text
-          color="#333"
-          _dark={{ color: 'gray.200' }}
-          fontWeight="600"
-          mb="16px"
-        >
+        <Text css={headerStyles} mb="16px">
           {props.uiSchema?.['ui:header']}
         </Text>
       )}

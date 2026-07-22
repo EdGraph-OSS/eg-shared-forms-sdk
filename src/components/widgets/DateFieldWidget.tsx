@@ -7,6 +7,9 @@ import {
 import { SingleDatepicker } from 'chakra-dayzed-datepicker'
 import { DateTime } from 'luxon'
 import { useRef } from 'react'
+import { textFieldRecipe } from '../../ui/recipes/text-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 import './DateFieldWidget.css'
 
 export default function DateFieldWidget(props: WidgetProps) {
@@ -23,6 +26,9 @@ export default function DateFieldWidget(props: WidgetProps) {
   }
 
   const fieldRef = useRef<HTMLDivElement | null>(null)
+  const fieldStyles = useSingleRecipeStyles('textField', textFieldRecipe)({ invalid: !!error })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   return (
     <Field.Root
       className='eg-date-field-widget'
@@ -35,27 +41,18 @@ export default function DateFieldWidget(props: WidgetProps) {
         mt={2}
       >
         { props.uiSchema?.['ui:header'] && (
-          <Text
-            color="#333"
-            _dark={{ color: 'gray.200' }}
-            fontWeight="600"
-            mb="8px"
-          >
+          <Text css={headerStyles} mb="8px">
             { props.uiSchema?.['ui:header'] }
           </Text>
         )}
 
         <Flex
           ref={fieldRef}
-          fontSize="1rem"
           h="54px"
-          bg="white"
-          _dark={{ bg: 'gray.800', borderColor: error ? 'red.500' : 'gray.600' }}
-          border={error ? '2px solid red' : '2px solid #e9ecef'}
-          borderRadius="6px"
           alignItems="center"
           minW="390px"
           overflow="hidden"
+          css={fieldStyles}
         >
           <div className="popover-root" style={{ width: '100%' }}>
             <SingleDatepicker

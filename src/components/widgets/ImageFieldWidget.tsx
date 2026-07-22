@@ -8,6 +8,8 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react'
+import { imageFieldRecipe } from '../../ui/recipes/image-field'
+import { useRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function ImageFieldWidget<T = any, S extends StrictRJSFSchema = RJSFSchema>({
   id,
@@ -19,11 +21,13 @@ export default function ImageFieldWidget<T = any, S extends StrictRJSFSchema = R
   const title = schema.title
   const altText = schema.description ?? uiSchema?.['ui:options']?.alt ?? ''
 
+  const styles = useRecipeStyles('imageField', imageFieldRecipe)()
+
   return (
     <Field.Root id={id} className='eg-image-field-widget'>
       <Flex flexDir="column" w="full" mt={1}>
         {title && (
-          <Text fontWeight="bold" fontSize="sm" color="#4A5568" _dark={{ color: 'gray.100' }} mb={1} dangerouslySetInnerHTML={{ __html: String(title) }} />
+          <Text css={styles.title} mb={1} dangerouslySetInnerHTML={{ __html: String(title) }} />
         )}
         {imageUrl && (
           <Flex as="figure" flexDir="column" gap={2} alignItems="flex-start">
@@ -38,7 +42,7 @@ export default function ImageFieldWidget<T = any, S extends StrictRJSFSchema = R
               }}
             />
             {altText && (
-              <Text as="figcaption" fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }} dangerouslySetInnerHTML={{ __html: String(altText) }} />
+              <Text as="figcaption" css={styles.caption} dangerouslySetInnerHTML={{ __html: String(altText) }} />
             )}
           </Flex>
         )}

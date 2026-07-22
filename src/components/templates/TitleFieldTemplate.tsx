@@ -4,19 +4,7 @@ import type {
   StrictRJSFSchema,
   TitleFieldProps,
 } from '@rjsf/utils'
-import { Heading } from '@chakra-ui/react'
-
-const styles = {
-  heading: {
-    size: 'xl',
-    fontWeight: 'bold',
-    color: '#1A365D',
-    _dark: { color: 'gray.100' },
-    textAlign: 'center',
-    mb: 4,
-    mt: 0,
-  },
-} as const
+import { TitleHeading } from '../../ui/recipes/title-heading'
 
 export default function TitleFieldTemplate<
   T = any,
@@ -26,13 +14,9 @@ export default function TitleFieldTemplate<
   const { id, title, required } = props
   if (!title) { return null }
   return (
-    <Heading
-      className='eg-title-field'
-      id={id}
-      as="h1"
-      {...styles.heading}>
+    <TitleHeading className='eg-title-field' id={id} variant="standalone">
       {title}
       {required && <span className="text-red-500 ml-1">*</span>}
-    </Heading>
+    </TitleHeading>
   )
 }

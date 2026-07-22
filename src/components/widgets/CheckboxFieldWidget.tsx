@@ -16,6 +16,9 @@ import {
   ariaDescribedByIds,
   optionId,
 } from '@rjsf/utils'
+import { checkboxFieldRecipe } from '../../ui/recipes/checkbox-field'
+import { fieldHeaderRecipe } from '../../ui/recipes/field-header'
+import { useRecipeStyles, useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 
 export default function CheckboxWidget<T = any, S extends StrictRJSFSchema = RJSFSchema, F extends FormContextType = any>({
   id,
@@ -32,29 +35,19 @@ export default function CheckboxWidget<T = any, S extends StrictRJSFSchema = RJS
   // Checkbox is multi-select: formData holds an array of the selected option values.
   const selected: string[] = Array.isArray(value) ? value.map(v => String(v)) : []
 
+  const styles = useRecipeStyles('checkboxField', checkboxFieldRecipe)({ invalid: !!error })
+  const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+
   return (
     <Field.Root className='eg-checkbox-field-widget' required={required} readOnly={readonly} invalid={!!error}>
 
       { uiSchema?.['ui:header'] && (
-        <Text
-          color="#333"
-          _dark={{ color: 'gray.200' }}
-          fontWeight="600"
-          mb="16px"
-        >
+        <Text css={headerStyles} mb="16px">
           { uiSchema?.['ui:header'] }
         </Text>
       )}
 
-      <Flex
-        bg="white"
-        _dark={{ bg: 'gray.800', borderColor: error ? 'red.500' : 'gray.600' }}
-        borderWidth="2px"
-        borderColor={error ? 'red.500' : '#e9ecef'}
-        flexDir="column"
-        w="full"
-        padding="8px"
-      >
+      <Flex css={styles.container}>
         <CheckboxGroup
           value={selected}
           onValueChange={(next: string[]) => !readonly && onChange(next as unknown as T)}
@@ -82,15 +75,8 @@ export default function CheckboxWidget<T = any, S extends StrictRJSFSchema = RJS
                   }}
                 >
                   <Checkbox.HiddenInput />
-                  <Checkbox.Control
-                    cursor="pointer"
-                    color="white"
-                    colorPalette="blue"
-                    border="1px solid transparent"
-                    borderColor="gray.300 !important"
-                    ringColor="var(--eg-accent)"
-                  />
-                  <Checkbox.Label cursor="pointer" fontSize={14} color="gray.700" _dark={{ color: 'gray.100' }}>{option.label}</Checkbox.Label>
+                  <Checkbox.Control css={styles.control} />
+                  <Checkbox.Label css={styles.label}>{option.label}</Checkbox.Label>
                 </Checkbox.Root>
               )
             })}
