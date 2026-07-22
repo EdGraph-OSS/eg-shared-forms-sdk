@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createSlotRecipeContext, defineSlotRecipe } from '@chakra-ui/react'
+import { chakra, defineSlotRecipe } from '@chakra-ui/react'
+import { useRecipeStyles } from '../use-recipe-styles'
 
 export const errorListRecipe = defineSlotRecipe({
   className: 'eg-error-list-recipe',
@@ -29,7 +30,16 @@ export const errorListRecipe = defineSlotRecipe({
   },
 })
 
-const { withProvider, withContext } = createSlotRecipeContext({ key: 'errorList' })
+function useErrorListStyles() {
+  return useRecipeStyles('errorList', errorListRecipe)()
+}
 
-export const ErrorListContainer = withProvider<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'container')
-export const ErrorListHeading = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'heading')
+export function ErrorListContainer(props: HTMLChakraProps<'div'>) {
+  const styles = useErrorListStyles()
+  return <chakra.div css={styles.container} {...props} />
+}
+
+export function ErrorListHeading(props: HTMLChakraProps<'p'>) {
+  const styles = useErrorListStyles()
+  return <chakra.p css={styles.heading} {...props} />
+}

@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 /**
  * Standalone recipe (not an override of Chakra's built-in `heading` recipe) so we don't
@@ -37,6 +38,7 @@ interface TitleHeadingProps extends HTMLChakraProps<'h1'> {
   variant?: 'standalone' | 'root'
 }
 
-const { withContext } = createRecipeContext({ key: 'titleHeading' })
-
-export const TitleHeading = withContext<HTMLHeadingElement, TitleHeadingProps>('h1')
+export function TitleHeading({ variant, ...rest }: TitleHeadingProps) {
+  const styles = useSingleRecipeStyles('titleHeading', titleHeadingRecipe)({ variant })
+  return <chakra.h1 css={styles} {...rest} />
+}

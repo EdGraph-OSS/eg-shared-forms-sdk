@@ -1,5 +1,7 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { forwardRef } from 'react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 /** Shared "ui:header" / prompt label look used above most widget inputs. */
 export const fieldHeaderRecipe = defineRecipe({
@@ -11,6 +13,10 @@ export const fieldHeaderRecipe = defineRecipe({
   },
 })
 
-const { withContext } = createRecipeContext({ key: 'fieldHeader' })
-
-export const FieldHeader = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p')
+export const FieldHeader = forwardRef<HTMLParagraphElement, HTMLChakraProps<'p'>>(function FieldHeader(
+  props,
+  ref,
+) {
+  const styles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  return <chakra.p ref={ref} css={styles} {...props} />
+})
