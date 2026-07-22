@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 export const fieldErrorRecipe = defineRecipe({
   className: 'eg-field-error-recipe',
@@ -10,6 +11,7 @@ export const fieldErrorRecipe = defineRecipe({
   },
 })
 
-const { withContext } = createRecipeContext({ key: 'fieldError' })
-
-export const FieldError = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p')
+export function FieldError(props: HTMLChakraProps<'p'>) {
+  const styles = useSingleRecipeStyles('fieldError', fieldErrorRecipe)()
+  return <chakra.p css={styles} {...props} />
+}

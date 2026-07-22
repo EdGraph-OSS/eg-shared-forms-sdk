@@ -1,5 +1,7 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createSlotRecipeContext, defineSlotRecipe } from '@chakra-ui/react'
+import { chakra, defineSlotRecipe } from '@chakra-ui/react'
+import { createContext, useContext } from 'react'
+import { useRecipeStyles } from '../use-recipe-styles'
 
 export const conditionalFieldRecipe = defineSlotRecipe({
   className: 'eg-conditional-field-recipe',
@@ -71,13 +73,44 @@ interface ConditionalFieldRootProps extends HTMLChakraProps<'div'> {
   fullWidth?: boolean
 }
 
-const { withProvider, withContext } = createSlotRecipeContext({ key: 'conditionalField' })
+type ConditionalFieldSlot = 'row' | 'layout' | 'labelColumn' | 'label' | 'description' | 'fieldColumn'
+type ConditionalFieldStyles = Record<ConditionalFieldSlot, Record<string, unknown> | undefined>
 
-export const ConditionalField = {
-  Row: withProvider<HTMLDivElement, ConditionalFieldRootProps>('div', 'row'),
-  Layout: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'layout'),
-  LabelColumn: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'labelColumn'),
-  Label: withContext<HTMLLabelElement, HTMLChakraProps<'label'>>('label', 'label'),
-  Description: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'description'),
-  FieldColumn: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'fieldColumn'),
+const ConditionalFieldStylesContext = createContext<ConditionalFieldStyles | null>(null)
+
+function useSlotStyles(slot: ConditionalFieldSlot) {
+  const styles = useContext(ConditionalFieldStylesContext)
+  return styles?.[slot]
 }
+
+function Row({ fullWidth, ...rest }: ConditionalFieldRootProps) {
+  const recipeFn = useRecipeStyles('conditionalField', conditionalFieldRecipe)
+  const styles = recipeFn({ fullWidth }) as ConditionalFieldStyles
+  return (
+    <ConditionalFieldStylesContext.Provider value={styles}>
+      <chakra.div css={styles.row} {...rest} />
+    </ConditionalFieldStylesContext.Provider>
+  )
+}
+
+function Layout(props: HTMLChakraProps<'div'>) {
+  return <chakra.div css={useSlotStyles('layout')} {...props} />
+}
+
+function LabelColumn(props: HTMLChakraProps<'div'>) {
+  return <chakra.div css={useSlotStyles('labelColumn')} {...props} />
+}
+
+function Label(props: HTMLChakraProps<'label'>) {
+  return <chakra.label css={useSlotStyles('label')} {...props} />
+}
+
+function Description(props: HTMLChakraProps<'div'>) {
+  return <chakra.div css={useSlotStyles('description')} {...props} />
+}
+
+function FieldColumn(props: HTMLChakraProps<'div'>) {
+  return <chakra.div css={useSlotStyles('fieldColumn')} {...props} />
+}
+
+export const ConditionalField = { Row, Layout, LabelColumn, Label, Description, FieldColumn }

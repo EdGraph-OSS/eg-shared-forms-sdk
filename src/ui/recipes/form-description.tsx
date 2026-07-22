@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 export const formDescriptionRecipe = defineRecipe({
   className: 'eg-form-description-recipe',
@@ -27,6 +28,7 @@ interface FormDescriptionProps extends HTMLChakraProps<'p'> {
   variant: 'root' | 'custom'
 }
 
-const { withContext } = createRecipeContext({ key: 'formDescription' })
-
-export const FormDescription = withContext<HTMLParagraphElement, FormDescriptionProps>('p')
+export function FormDescription({ variant, ...rest }: FormDescriptionProps) {
+  const styles = useSingleRecipeStyles('formDescription', formDescriptionRecipe)({ variant })
+  return <chakra.p css={styles} {...rest} />
+}

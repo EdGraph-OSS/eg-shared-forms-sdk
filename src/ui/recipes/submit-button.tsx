@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 /**
  * Standalone recipe (not an override of Chakra's built-in `button` recipe) so we don't
@@ -32,6 +33,7 @@ export const submitButtonRecipe = defineRecipe({
   },
 })
 
-const { withContext } = createRecipeContext({ key: 'submitButton' })
-
-export const SubmitButtonBase = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button')
+export function SubmitButtonBase(props: HTMLChakraProps<'button'>) {
+  const styles = useSingleRecipeStyles('submitButton', submitButtonRecipe)()
+  return <chakra.button css={styles} {...props} />
+}

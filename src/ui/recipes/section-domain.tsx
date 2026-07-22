@@ -1,6 +1,7 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createSlotRecipeContext, defineSlotRecipe } from '@chakra-ui/react'
+import { chakra, defineSlotRecipe } from '@chakra-ui/react'
 import { colors } from '../theme'
+import { useRecipeStyles } from '../use-recipe-styles'
 
 export const sectionDomainRecipe = defineSlotRecipe({
   className: 'eg-section-domain-recipe',
@@ -53,13 +54,38 @@ export const sectionDomainRecipe = defineSlotRecipe({
   },
 })
 
-const { withProvider, withContext } = createSlotRecipeContext({ key: 'sectionDomain' })
-
-export const SectionDomain = {
-  Root: withProvider<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'root'),
-  Header: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'header'),
-  Heading: withContext<HTMLHeadingElement, HTMLChakraProps<'h2'>>('h2', 'heading'),
-  Description: withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'description'),
-  SubHeading: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'subHeading'),
-  Properties: withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'properties'),
+function useSectionDomainStyles() {
+  return useRecipeStyles('sectionDomain', sectionDomainRecipe)()
 }
+
+function Root(props: HTMLChakraProps<'div'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.div css={styles.root} {...props} />
+}
+
+function Header(props: HTMLChakraProps<'div'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.div css={styles.header} {...props} />
+}
+
+function Heading(props: HTMLChakraProps<'h2'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.h2 css={styles.heading} {...props} />
+}
+
+function Description(props: HTMLChakraProps<'p'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.p css={styles.description} {...props} />
+}
+
+function SubHeading(props: HTMLChakraProps<'div'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.div css={styles.subHeading} {...props} />
+}
+
+function Properties(props: HTMLChakraProps<'div'>) {
+  const styles = useSectionDomainStyles()
+  return <chakra.div css={styles.properties} {...props} />
+}
+
+export const SectionDomain = { Root, Header, Heading, Description, SubHeading, Properties }

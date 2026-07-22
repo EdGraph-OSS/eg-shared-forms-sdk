@@ -1,5 +1,6 @@
 import type { HTMLChakraProps } from '@chakra-ui/react'
-import { createRecipeContext, defineRecipe } from '@chakra-ui/react'
+import { chakra, defineRecipe } from '@chakra-ui/react'
+import { useSingleRecipeStyles } from '../use-recipe-styles'
 
 export const objectFieldCustomContainerRecipe = defineRecipe({
   className: 'eg-object-field-custom-container-recipe',
@@ -16,6 +17,7 @@ export const objectFieldCustomContainerRecipe = defineRecipe({
   },
 })
 
-const { withContext } = createRecipeContext({ key: 'objectFieldCustomContainer' })
-
-export const ObjectFieldCustomContainer = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div')
+export function ObjectFieldCustomContainer(props: HTMLChakraProps<'div'>) {
+  const styles = useSingleRecipeStyles('objectFieldCustomContainer', objectFieldCustomContainerRecipe)()
+  return <chakra.div css={styles} {...props} />
+}
