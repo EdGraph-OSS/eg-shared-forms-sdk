@@ -1,5 +1,6 @@
 import { NativeSelect } from '@chakra-ui/react'
 import type { RecipeEntryRef } from './recipe-registry'
+import { entryId, isGlobalEntry } from './recipe-registry'
 
 interface RecipePickerProps {
   entries: RecipeEntryRef[]
@@ -7,8 +8,8 @@ interface RecipePickerProps {
   onSelect: (entry: RecipeEntryRef) => void
 }
 
-function entryId(entry: RecipeEntryRef) {
-  return `${entry.kind}:${entry.key}`
+function optionLabel(entry: RecipeEntryRef): string {
+  return isGlobalEntry(entry) ? `${entry.key} (Global)` : entry.key
 }
 
 export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps) {
@@ -28,14 +29,14 @@ export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps)
         {recipes.length > 0 && (
           <optgroup label="Recipes">
             {recipes.map(entry => (
-              <option key={entryId(entry)} value={entryId(entry)}>{entry.key}</option>
+              <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
             ))}
           </optgroup>
         )}
         {slotRecipes.length > 0 && (
           <optgroup label="Slot Recipes">
             {slotRecipes.map(entry => (
-              <option key={entryId(entry)} value={entryId(entry)}>{entry.key}</option>
+              <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
             ))}
           </optgroup>
         )}

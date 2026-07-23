@@ -15,6 +15,7 @@ interface ThemeEditorPanelProps {
   onRecipeChange: (key: keyof RecipesRegistry, value: unknown) => void
   onSlotRecipeChange: (key: keyof SlotRecipesRegistry, value: unknown) => void
   onReset: () => void
+  onResetComponent: (entries: RecipeEntryRef[]) => void
 }
 
 export function ThemeEditorPanel({
@@ -23,6 +24,7 @@ export function ThemeEditorPanel({
   onRecipeChange,
   onSlotRecipeChange,
   onReset,
+  onResetComponent,
 }: ThemeEditorPanelProps) {
   const [selectedComponent, setSelectedComponent] = useState<ComponentGroup>(componentGroups[0])
   const [selected, setSelected] = useState<RecipeEntryRef>(componentGroups[0].entries[0])
@@ -43,12 +45,12 @@ export function ThemeEditorPanel({
     <Flex flexDir='column' borderWidth="1px" borderRadius="md" p={4} w='full'>
       <HStack justify="space-between" mb={4}>
         <Heading size="xl">Theme Editor</Heading>
-        <Button 
-          fontWeight='bold'
-          border='1px solid black'
-          size="sm" 
-          variant="outline" 
-          onClick={onReset}>Reset to defaults 🔄</Button>
+          <Button
+            fontWeight='bold'
+            border='1px solid black'
+            size="sm"
+            variant="outline"
+            onClick={onReset}>Reset to defaults 🔄</Button>
       </HStack>
       <VStack flexDir='column' align="stretch" gap={3}>
         <Flex flexDir='column' gap='16px' w='350px'>
@@ -63,9 +65,19 @@ export function ThemeEditorPanel({
             <ComponentPreview name={selectedComponent.name} />
           </Box>
           <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50" _dark={{ bg: 'gray.900' }} w='49%'>
-            <Text fontWeight='bold' fontSize="sm" mb='16px' color="gray.500">
-              Editing {selected.kind === 'recipe' ? 'recipe' : 'slot recipe'} "{selected.key}" — changes apply live to the preview above.
-            </Text>
+            <Flex alignItems='center' w='full'>
+              <Text fontWeight='bold' fontSize="sm" my='16px' color="gray.500">
+                Editing {selected.kind === 'recipe' ? 'recipe' : 'slot recipe'} "{selected.key}" — changes apply live to the preview above.
+              </Text>
+              <Button
+                bg='white'
+                fontWeight='bold'
+                border='1px solid black'
+                size="xs"
+                ml='auto'
+                variant="outline"
+                onClick={() => onResetComponent(selectedComponent.entries)}>Reset {selectedComponent.label} 🔄</Button>
+            </Flex>
             <JsonRecipeEditor
               editorKey={`${selected.kind}:${selected.key}`}
               value={currentValue}

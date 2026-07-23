@@ -165,7 +165,8 @@ function App(props: Props) {
             slotRecipes={themeEditor.slotRecipes}
             onRecipeChange={themeEditor.setRecipeOverride}
             onSlotRecipeChange={themeEditor.setSlotRecipeOverride}
-            onReset={themeEditor.reset} /> }
+            onReset={themeEditor.reset}
+            onResetComponent={themeEditor.resetEntries} /> }
 
           { !editorMode && <Flex 
             flexDir='column'

@@ -155,3 +155,30 @@ export const componentGroups: ComponentGroup[] = (['widget', 'template'] as Comp
     entries,
   })),
 )
+
+export function entryId(entry: RecipeEntryRef): string {
+  return `${entry.kind}:${entry.key}`
+}
+
+/**
+ * Entry ids (recipe/slotRecipe) referenced by more than one component group,
+ * i.e. editing them affects other widgets/templates beyond the one selected.
+ */
+const globalEntryIds: Set<string> = (() => {
+  const usageCounts = new Map<string, number>()
+  for (const group of componentGroups) {
+    for (const entry of group.entries) {
+      const id = entryId(entry)
+      usageCounts.set(id, (usageCounts.get(id) ?? 0) + 1)
+    }
+  }
+  return new Set(
+    Array.from(usageCounts.entries())
+      .filter(([, count]) => count > 1)
+      .map(([id]) => id),
+  )
+})()
+
+export function isGlobalEntry(entry: RecipeEntryRef): boolean {
+  return globalEntryIds.has(entryId(entry))
+}

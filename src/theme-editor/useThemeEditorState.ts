@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from '../ui'
+import type { RecipeEntryRef } from './recipe-registry'
 
 export function useThemeEditorState(
   initialRecipes: ProviderRecipes = {},
@@ -24,5 +25,22 @@ export function useThemeEditorState(
     setSlotRecipes({})
   }, [])
 
-  return { recipes, slotRecipes, setRecipeOverride, setSlotRecipeOverride, reset }
+  const resetEntries = useCallback((entries: RecipeEntryRef[]) => {
+    setRecipes(prev => {
+      const next = { ...prev }
+      for (const entry of entries) {
+        if (entry.kind === 'recipe') delete next[entry.key]
+      }
+      return next
+    })
+    setSlotRecipes(prev => {
+      const next = { ...prev }
+      for (const entry of entries) {
+        if (entry.kind === 'slotRecipe') delete next[entry.key]
+      }
+      return next
+    })
+  }, [])
+
+  return { recipes, slotRecipes, setRecipeOverride, setSlotRecipeOverride, reset, resetEntries }
 }
