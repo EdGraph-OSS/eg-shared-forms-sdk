@@ -17,12 +17,13 @@ import { CustomFieldTemplate, DescriptionFieldTemplate, ErrorListTemplate, Field
 import { CheckboxCardsField, ContactVerificationField, CurrentUserName, DateDropdownWidget, DateFieldWidget, EmailFieldWidget, HtmlFieldWidget, ImageFieldWidget, InfoCardWidget, InfoMessageWidget, InputFieldWidget, NumberFieldWidget, OrFieldWidget, PhoneFieldWidget, RadioCardsField, RadioFieldWidget, ScoringFieldWidget, SectionPicker, SelectFieldWidget, VerificationCodeWidget } from './components/widgets'
 import { Provider, sectionDomainRecipe, errorListRecipe, conditionalFieldRecipe, checkboxFieldRecipe, textFieldRecipe, infoMessageRecipe, scoringFieldRecipe, infoCardRecipe } from './ui'
 import type { RecipesRegistry, SlotRecipesRegistry } from './ui'
+import { ThemeEditorPanel, useThemeEditorState } from './theme-editor'
 import { aggregateForm } from './utils/form'
 import React from 'react'
 import { humanizeRjsfErrors } from './utils'
 import { createConditionalRequiredCustomValidate } from './utils/conditionalRequiredValidate'
 import sampleForm from "./sample-form"
-import { Button } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 const { form, sections, questions } = sampleForm
 
 function App(props: Props) {
@@ -110,9 +111,9 @@ function App(props: Props) {
     [schema, uiSchemaWithReadOnly],
   )
 
-  const [formContext, setFormContext] = useState({ 
-    formData, 
-    maskedEmail: "elv**@gmail.com", 
+  const [formContext, setFormContext] = useState({
+    formData,
+    maskedEmail: "elv**@gmail.com",
     onExecuteAction
   })
 
@@ -120,35 +121,61 @@ function App(props: Props) {
     console.log("actionId", action, value)
   }
 
+  const themeEditor = useThemeEditorState(getRecipeOverrides(), getSlotRecipeOverrides())
+  const [editorMode, setEditorMode] = useState(true)
+
   return (
-    <div>
-      Form:
-      <Provider
-        recipes={getRecipeOverrides()}
-        slotRecipes={getSlotRecipeOverrides()}>
+    <Provider
+      recipes={themeEditor.recipes}
+      slotRecipes={themeEditor.slotRecipes}>
+      <Flex flexDir='column' w='250px'>
+        <Button 
+          bg='white' 
+          color='black'
+          border='1px solid lightgray'
+          fontWeight='bold'
+          width='100%'
+          onClick={() => setEditorMode(!editorMode)}>
+            {editorMode? "Dev 🟢" : "Editor 🔵"}
+        </Button>
         <Button
-          onClick={toggleDarkMode} colorScheme="blue">Toggle Dark Mode</Button>
-        <Form
-          noHtml5Validate={true}
-          focusOnFirstError={true}
-          formData={formData}
-          onChange={e => setFormData(e.formData)}
-          onSubmit={() => console.log("formData", formData)}
-          formContext={formContext}
-          schema={schema}
-          uiSchema={uiSchemaWithReadOnly}
-          validator={validator}
-          transformErrors={transformErrors}
-          customValidate={customValidate}
-          widgets={customWidgets}
-          fields={customFields}
-          templates={customTemplates} />
-      </Provider>
-      <div className="debugbox">
-        <h3>Sample Response Output</h3>
-        <pre>{JSON.stringify(formData, null, 2)}</pre>
-      </div>
-    </div>
+          mt='16px'
+          colorScheme="blue"
+          onClick={toggleDarkMode}>Toggle Dark Mode</Button>
+      </Flex>
+      <Flex>
+          { !editorMode && <Form
+            noHtml5Validate={true}
+            focusOnFirstError={true}
+            formData={formData}
+            onChange={e => setFormData(e.formData)}
+            onSubmit={() => console.log("formData", formData)}
+            formContext={formContext}
+            schema={schema}
+            uiSchema={uiSchemaWithReadOnly}
+            validator={validator}
+            transformErrors={transformErrors}
+            customValidate={customValidate}
+            widgets={customWidgets}
+            fields={customFields}
+            templates={customTemplates} /> }
+
+          { editorMode && <ThemeEditorPanel
+            recipes={themeEditor.recipes}
+            slotRecipes={themeEditor.slotRecipes}
+            onRecipeChange={themeEditor.setRecipeOverride}
+            onSlotRecipeChange={themeEditor.setSlotRecipeOverride}
+            onReset={themeEditor.reset} /> }
+
+          { !editorMode && <Flex 
+            flexDir='column'
+            border='1px solid lightgray'
+            padding='20px'>
+            <Text fontWeight='bold'>Sample Response Output</Text>
+            <pre>{JSON.stringify(formData, null, 2)}</pre>
+          </Flex> }
+      </Flex>
+    </Provider>
   )
 }
 

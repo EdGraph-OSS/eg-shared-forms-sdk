@@ -94,8 +94,8 @@ export interface ProviderProps extends ColorModeProviderProps {
 }
 
 export function Provider({ recipes, slotRecipes, ...props }: ProviderProps) {
-  // console.log('recipes', recipes)
-  // console.log('recipeslots', slotRecipes)
+  console.log('recipes', recipes)
+  console.log('recipeslots', slotRecipes)
 
   const baseTheme = defineConfig({
     theme: {
