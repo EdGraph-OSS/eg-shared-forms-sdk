@@ -64,3 +64,9 @@ export const colors = {
         dark: '#f0f0f0',
     },
 } as const
+
+export const fonts = {
+    heading: `var(--eg-font-heading, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)`,
+    body: `var(--eg-font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)`,
+    mono: `var(--eg-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)`,
+} as const

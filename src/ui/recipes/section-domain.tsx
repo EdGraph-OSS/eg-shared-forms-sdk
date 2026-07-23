@@ -11,7 +11,7 @@ export const sectionDomainRecipe = defineSlotRecipe({
       borderRadius: 'sm',
       overflow: 'hidden',
       borderWidth: '1px',
-      borderColor: 'primary',
+      borderColor: colors.primary.light,
       _dark: { borderColor: 'gray.600' },
     },
     header: {

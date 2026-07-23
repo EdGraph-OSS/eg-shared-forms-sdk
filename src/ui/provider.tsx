@@ -5,9 +5,10 @@ import {
   defineConfig,
   mergeConfigs,
 } from '@chakra-ui/react'
+import type { ThemingConfig } from '@chakra-ui/react'
 import { ColorModeProvider } from './color-mode'
 import type { ColorModeProviderProps } from './color-mode'
-import { colors } from './theme'
+import { fonts } from './theme'
 import { sectionDomainRecipe } from './recipes/section-domain'
 import { fieldErrorRecipe } from './recipes/field-error'
 import { errorListRecipe } from './recipes/error-list'
@@ -91,22 +92,28 @@ export interface ProviderProps extends ColorModeProviderProps {
    * dateDropdown). Same merge behavior as `recipes`.
    */
   slotRecipes?: ProviderSlotRecipes
+  /**
+   * Override or extend raw Chakra tokens — color scales (e.g. `colors.blue.500`)
+   * as well as the package's `fonts.heading`/`fonts.body`/`fonts.mono` — on top of
+   * the package defaults and Chakra's own built-ins. Only the keys you specify are
+   * replaced; anything you don't set falls through to the existing default, since
+   * `createSystem`/`mergeConfigs` merge token maps key by key rather than replacing
+   * them wholesale. E.g. `tokens={{ fonts: { heading: { value: "'Poppins', sans-serif" } } }}`.
+   */
+  tokens?: ThemingConfig['tokens']
 }
 
-export function Provider({ recipes, slotRecipes, ...props }: ProviderProps) {
+export function Provider({ recipes, slotRecipes, tokens, ...props }: ProviderProps) {
   console.log('recipes', recipes)
   console.log('recipeslots', slotRecipes)
 
   const baseTheme = defineConfig({
     theme: {
-      semanticTokens: {
-        colors: {
-          primary: { value: colors.primary.DEFAULT },
-          accent: { value: colors.accent.DEFAULT },
-          success: { value: colors.success.DEFAULT },
-          info: { value: colors.info.DEFAULT },
-          warning: { value: colors.bg.DEFAULT },
-          error: { value: colors.error.DEFAULT },
+      tokens: {
+        fonts: {
+          heading: { value: fonts.heading },
+          body: { value: fonts.body },
+          mono: { value: fonts.mono },
         },
       },
       recipes: {
@@ -141,8 +148,8 @@ export function Provider({ recipes, slotRecipes, ...props }: ProviderProps) {
     },
   })
 
-  const theme = (recipes || slotRecipes)
-    ? mergeConfigs(baseTheme, defineConfig({ theme: { recipes, slotRecipes } }))
+  const theme = (recipes || slotRecipes || tokens)
+    ? mergeConfigs(baseTheme, defineConfig({ theme: { recipes, slotRecipes, tokens } }))
     : baseTheme
 
   const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
