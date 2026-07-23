@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 import { linter } from '@codemirror/lint'
-import { color } from '@uiw/codemirror-extensions-color'
+import { colorTheme } from '@uiw/codemirror-extensions-color'
 import { Box, Text } from '@chakra-ui/react'
+import { jsonColorWidgets } from './jsonColorWidgets'
 
-const extensions = [json(), linter(jsonParseLinter()), color]
+const extensions = [json(), linter(jsonParseLinter()), jsonColorWidgets, colorTheme]
 
 interface JsonRecipeEditorProps {
   /** Identifies which recipe is being edited; text is reseeded whenever this changes. */
