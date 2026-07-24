@@ -25,6 +25,7 @@ import {
 } from '../components/widgets'
 import {
   CustomFieldTemplate,
+  DescriptionFieldTemplate,
   ErrorListTemplate,
   FieldErrorTemplate,
   ObjectFieldTemplate,
@@ -411,6 +412,10 @@ function PreviewCustomFieldTemplate() {
   )
 }
 
+function PreviewDescriptionFieldTemplate() {
+  return <DescriptionFieldTemplate {...({ description: 'Helper text describing this field.' } as any)} />
+}
+
 function PreviewErrorListTemplate() {
   return (
     <ErrorListTemplate {...({
@@ -480,6 +485,7 @@ const PREVIEW_COMPONENTS: Record<string, () => ReactNode> = {
   SelectFieldWidget: PreviewSelectFieldWidget,
   VerificationCodeWidget: PreviewVerificationCodeWidget,
   CustomFieldTemplate: PreviewCustomFieldTemplate,
+  DescriptionFieldTemplate: PreviewDescriptionFieldTemplate,
   ErrorListTemplate: PreviewErrorListTemplate,
   FieldErrorTemplate: PreviewFieldErrorTemplate,
   ObjectFieldTemplate: PreviewObjectFieldTemplate,

@@ -1,12 +1,4 @@
-export const colorsArray = [
-    'accent',
-    'secondary',
-    'primary',
-    'info',
-    'success',
-    'error',
-    'transparent',
-]
+import { defineTokens } from '@chakra-ui/react'
 
 export const colors = {
     gray: {
@@ -64,6 +56,16 @@ export const colors = {
         dark: '#f0f0f0',
     },
 } as const
+
+/** `colors` reshaped into Chakra's `{ value }` token format, for registering as `tokens.colors`. */
+export const colorTokens = defineTokens.colors(
+    Object.fromEntries(
+        Object.entries(colors).map(([scale, shades]) => [
+            scale,
+            Object.fromEntries(Object.entries(shades).map(([shade, value]) => [shade, { value }])),
+        ])
+    )
+)
 
 export const fonts = {
     heading: `var(--eg-font-heading, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)`,

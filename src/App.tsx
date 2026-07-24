@@ -127,7 +127,8 @@ function App(props: Props) {
   return (
     <Provider
       recipes={themeEditor.recipes}
-      slotRecipes={themeEditor.slotRecipes}>
+      slotRecipes={themeEditor.slotRecipes}
+      tokens={themeEditor.tokens}>
       <Flex flexDir='column' w='250px'>
         <Button 
           bg='white' 
@@ -163,8 +164,11 @@ function App(props: Props) {
           { editorMode && <ThemeEditorPanel
             recipes={themeEditor.recipes}
             slotRecipes={themeEditor.slotRecipes}
+            tokens={themeEditor.tokens}
             onRecipeChange={themeEditor.setRecipeOverride}
             onSlotRecipeChange={themeEditor.setSlotRecipeOverride}
+            onColorTokenChange={themeEditor.setColorToken}
+            onFontTokenChange={themeEditor.setFontToken}
             onReset={themeEditor.reset}
             onResetComponent={themeEditor.resetEntries} /> }
 

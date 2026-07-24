@@ -1,6 +1,10 @@
 import { useCallback, useState } from 'react'
+import type { ThemingConfig } from '@chakra-ui/react'
 import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from '../ui'
 import type { RecipeEntryRef } from './recipe-registry'
+
+export type ThemeTokens = NonNullable<ThemingConfig['tokens']>
+export type FontTokenKey = 'heading' | 'body' | 'mono'
 
 export function useThemeEditorState(
   initialRecipes: ProviderRecipes = {},
@@ -8,6 +12,7 @@ export function useThemeEditorState(
 ) {
   const [recipes, setRecipes] = useState<ProviderRecipes>(initialRecipes)
   const [slotRecipes, setSlotRecipes] = useState<ProviderSlotRecipes>(initialSlotRecipes)
+  const [tokens, setTokens] = useState<ThemeTokens>({})
 
   // Values come from a hand-typed JSON editor, so there's no compile-time guarantee
   // they match the recipe's real shape — accept `unknown` here rather than pretending
@@ -20,9 +25,36 @@ export function useThemeEditorState(
     setSlotRecipes(prev => ({ ...prev, [key]: value }))
   }, [])
 
+  // Token values come from color/text inputs rather than the strict recursive
+  // TokenDefinition shape, so build the override as a plain object and cast it —
+  // same rationale as setRecipeOverride's `unknown` above.
+  const setColorToken = useCallback((scale: string, shade: string, value: string) => {
+    setTokens(prev => ({
+      ...prev,
+      colors: {
+        ...(prev.colors as Record<string, unknown> | undefined),
+        [scale]: {
+          ...(prev.colors?.[scale] as Record<string, unknown> | undefined),
+          [shade]: { value },
+        },
+      },
+    } as ThemeTokens))
+  }, [])
+
+  const setFontToken = useCallback((key: FontTokenKey, value: string) => {
+    setTokens(prev => ({
+      ...prev,
+      fonts: {
+        ...(prev.fonts as Record<string, unknown> | undefined),
+        [key]: { value },
+      },
+    } as ThemeTokens))
+  }, [])
+
   const reset = useCallback(() => {
     setRecipes({})
     setSlotRecipes({})
+    setTokens({})
   }, [])
 
   const resetEntries = useCallback((entries: RecipeEntryRef[]) => {
@@ -42,5 +74,15 @@ export function useThemeEditorState(
     })
   }, [])
 
-  return { recipes, slotRecipes, setRecipeOverride, setSlotRecipeOverride, reset, resetEntries }
+  return {
+    recipes,
+    slotRecipes,
+    tokens,
+    setRecipeOverride,
+    setSlotRecipeOverride,
+    setColorToken,
+    setFontToken,
+    reset,
+    resetEntries,
+  }
 }

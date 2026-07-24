@@ -8,13 +8,14 @@ import {
 import type { ThemingConfig } from '@chakra-ui/react'
 import { ColorModeProvider } from './color-mode'
 import type { ColorModeProviderProps } from './color-mode'
-import { fonts } from './theme'
+import { colorTokens, fonts } from './theme'
 import { sectionDomainRecipe } from './recipes/section-domain'
 import { fieldErrorRecipe } from './recipes/field-error'
 import { errorListRecipe } from './recipes/error-list'
 import { submitButtonRecipe } from './recipes/submit-button'
 import { titleHeadingRecipe } from './recipes/title-heading'
 import { formDescriptionRecipe } from './recipes/form-description'
+import { descriptionFieldRecipe } from './recipes/description-field'
 import { objectFieldCustomContainerRecipe } from './recipes/object-field-custom'
 import { conditionalFieldRecipe } from './recipes/conditional-field'
 import { fieldHeaderRecipe } from './recipes/field-header'
@@ -47,6 +48,7 @@ export interface RecipesRegistry {
   submitButton: typeof submitButtonRecipe
   titleHeading: typeof titleHeadingRecipe
   formDescription: typeof formDescriptionRecipe
+  descriptionField: typeof descriptionFieldRecipe
   objectFieldCustomContainer: typeof objectFieldCustomContainerRecipe
   fieldHeader: typeof fieldHeaderRecipe
   textField: typeof textFieldRecipe
@@ -79,8 +81,8 @@ export type ProviderSlotRecipes = Partial<SlotRecipesRegistry>
 export interface ProviderProps extends ColorModeProviderProps {
   /**
    * Override or extend the package's single-part recipes (fieldError, submitButton,
-   * titleHeading, formDescription, objectFieldCustomContainer, fieldHeader, textField,
-   * selectControl, iconBadge, infoMessage, verificationCode). Unset keys fall back to
+   * titleHeading, formDescription, descriptionField, objectFieldCustomContainer, fieldHeader,
+   * textField, selectControl, iconBadge, infoMessage, verificationCode). Unset keys fall back to
    * the package defaults; a partial recipe (e.g. just `{ base: { color: 'purple.600' } }`)
    * is deep-merged on top of the default rather than replacing it outright.
    */
@@ -110,6 +112,7 @@ export function Provider({ recipes, slotRecipes, tokens, ...props }: ProviderPro
   const baseTheme = defineConfig({
     theme: {
       tokens: {
+        colors: colorTokens,
         fonts: {
           heading: { value: fonts.heading },
           body: { value: fonts.body },
@@ -121,6 +124,7 @@ export function Provider({ recipes, slotRecipes, tokens, ...props }: ProviderPro
         submitButton: submitButtonRecipe,
         titleHeading: titleHeadingRecipe,
         formDescription: formDescriptionRecipe,
+        descriptionField: descriptionFieldRecipe,
         objectFieldCustomContainer: objectFieldCustomContainerRecipe,
         fieldHeader: fieldHeaderRecipe,
         textField: textFieldRecipe,

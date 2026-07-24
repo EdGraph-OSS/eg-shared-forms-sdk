@@ -3,13 +3,14 @@ import type { ProviderProps, ProviderRecipes, ProviderSlotRecipes, RecipesRegist
 import { toaster, Toaster } from "./toaster"
 import { useRecipeStyles, useSingleRecipeStyles } from "./use-recipe-styles"
 import { Tooltip } from "./tooltip"
-import { colors, colorsArray } from "./theme"
+import { colors } from "./theme"
 import { sectionDomainRecipe } from "./recipes/section-domain"
 import { fieldErrorRecipe } from "./recipes/field-error"
 import { errorListRecipe } from "./recipes/error-list"
 import { submitButtonRecipe } from "./recipes/submit-button"
 import { titleHeadingRecipe } from "./recipes/title-heading"
 import { formDescriptionRecipe } from "./recipes/form-description"
+import { descriptionFieldRecipe } from "./recipes/description-field"
 import { objectFieldCustomContainerRecipe } from "./recipes/object-field-custom"
 import { conditionalFieldRecipe } from "./recipes/conditional-field"
 import { fieldHeaderRecipe, FieldHeader } from "./recipes/field-header"
@@ -38,13 +39,13 @@ export {
   useRecipeStyles,
   useSingleRecipeStyles,
   colors,
-  colorsArray,
   sectionDomainRecipe,
   fieldErrorRecipe,
   errorListRecipe,
   submitButtonRecipe,
   titleHeadingRecipe,
   formDescriptionRecipe,
+  descriptionFieldRecipe,
   objectFieldCustomContainerRecipe,
   conditionalFieldRecipe,
   fieldHeaderRecipe,

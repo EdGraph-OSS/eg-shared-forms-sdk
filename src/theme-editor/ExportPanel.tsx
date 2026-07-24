@@ -1,21 +1,49 @@
 import { useMemo, useState } from 'react'
 import { Box, Button, Code, HStack } from '@chakra-ui/react'
+import { colors } from '../ui'
+import { fonts } from '../ui/theme'
 import type { ProviderRecipes, ProviderSlotRecipes } from '../ui'
+import type { ThemeTokens } from './useThemeEditorState'
+import { recipeDefaults, slotRecipeDefaults } from './recipe-registry'
 
 interface ExportPanelProps {
   recipes: ProviderRecipes
   slotRecipes: ProviderSlotRecipes
+  tokens: ThemeTokens
 }
 
-export function ExportPanel({ recipes, slotRecipes }: ExportPanelProps) {
+function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>> {
+  const overrides = tokens.colors as Record<string, Record<string, { value: string }>> | undefined
+  return Object.fromEntries(
+    Object.entries(colors).map(([scale, shades]) => [
+      scale,
+      Object.fromEntries(
+        Object.keys(shades).map(shade => [
+          shade,
+          overrides?.[scale]?.[shade]?.value ?? (shades as Record<string, string>)[shade],
+        ]),
+      ),
+    ]),
+  )
+}
+
+function mergeFonts(tokens: ThemeTokens): Record<string, string> {
+  const overrides = tokens.fonts as Record<string, { value: string }> | undefined
+  return Object.fromEntries(
+    Object.keys(fonts).map(key => [key, overrides?.[key]?.value ?? (fonts as Record<string, string>)[key]]),
+  )
+}
+
+export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) {
   const code = useMemo(() => {
-    return `import type { ProviderRecipes, ProviderSlotRecipes } from '@edgraph-oss/shared-forms/ui'
-
-export const recipes: ProviderRecipes = ${JSON.stringify(recipes, null, 2)}
-
-export const slotRecipes: ProviderSlotRecipes = ${JSON.stringify(slotRecipes, null, 2)}
-`
-  }, [recipes, slotRecipes])
+    const theme = {
+      colors: mergeColors(tokens),
+      fonts: mergeFonts(tokens),
+      recipes: { ...recipeDefaults, ...recipes },
+      slotRecipes: { ...slotRecipeDefaults, ...slotRecipes },
+    }
+    return JSON.stringify(theme, null, 2)
+  }, [recipes, slotRecipes, tokens])
 
   const [copied, setCopied] = useState(false)
 

@@ -4,6 +4,7 @@ import {
   submitButtonRecipe,
   titleHeadingRecipe,
   formDescriptionRecipe,
+  descriptionFieldRecipe,
   objectFieldCustomContainerRecipe,
   fieldHeaderRecipe,
   textFieldRecipe,
@@ -32,6 +33,7 @@ export const recipeDefaults: RecipesRegistry = {
   submitButton: submitButtonRecipe,
   titleHeading: titleHeadingRecipe,
   formDescription: formDescriptionRecipe,
+  descriptionField: descriptionFieldRecipe,
   objectFieldCustomContainer: objectFieldCustomContainerRecipe,
   fieldHeader: fieldHeaderRecipe,
   textField: textFieldRecipe,
@@ -106,8 +108,8 @@ function slotRecipe(key: keyof SlotRecipesRegistry): RecipeEntryRef {
  * Maps each themable widget/template (from src/components/widgets and
  * src/components/templates) to the recipes and slot recipes it actually
  * consumes, per their useRecipeStyles/useSingleRecipeStyles calls. Widgets
- * with no themable recipe (HtmlFieldWidget, DescriptionFieldTemplate) are
- * omitted since there'd be nothing to show in the second picker.
+ * with no themable recipe (HtmlFieldWidget) are omitted since there'd be
+ * nothing to show in the second picker.
  */
 const componentRecipeMap: Record<ComponentKind, Record<string, RecipeEntryRef[]>> = {
   widget: {
@@ -134,6 +136,7 @@ const componentRecipeMap: Record<ComponentKind, Record<string, RecipeEntryRef[]>
   },
   template: {
     CustomFieldTemplate: [slotRecipe('conditionalField')],
+    DescriptionFieldTemplate: [recipe('descriptionField')],
     ErrorListTemplate: [slotRecipe('errorList')],
     FieldErrorTemplate: [recipe('fieldError')],
     ObjectFieldTemplate: [
