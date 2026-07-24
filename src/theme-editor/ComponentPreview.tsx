@@ -1,6 +1,7 @@
 import { Component, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Box, Input, Text } from '@chakra-ui/react'
+import { chrome } from './chromeColors'
 import {
   CheckboxCardsField,
   CheckboxFieldWidget,
@@ -514,7 +515,7 @@ class PreviewBoundary extends Component<{ resetKey: string, children: ReactNode 
   render() {
     if (this.state.error) {
       return (
-        <Text fontSize="sm" color="red.500">
+        <Text fontSize="sm" color={chrome.errorText}>
           Preview failed to render: {this.state.error.message}
         </Text>
       )
@@ -531,7 +532,7 @@ export function ComponentPreview({ name }: ComponentPreviewProps) {
   const Preview = PREVIEW_COMPONENTS[name]
   if (!Preview) {
     return (
-      <Text fontSize="sm" color="gray.500">
+      <Text fontSize="sm" color={chrome.mutedText}>
         No live preview available for this component.
       </Text>
     )

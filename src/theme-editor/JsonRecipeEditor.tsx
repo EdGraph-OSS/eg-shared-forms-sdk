@@ -5,6 +5,7 @@ import { linter } from '@codemirror/lint'
 import { colorTheme } from '@uiw/codemirror-extensions-color'
 import { Box, Text } from '@chakra-ui/react'
 import { jsonColorWidgets } from './jsonColorWidgets'
+import { chrome } from './chromeColors'
 
 const extensions = [json(), linter(jsonParseLinter()), jsonColorWidgets, colorTheme]
 
@@ -43,7 +44,7 @@ export function JsonRecipeEditor({ editorKey, value, onChange }: JsonRecipeEdito
     <Box>
       <CodeMirror value={text} height="360px" extensions={extensions} onChange={handleChange} />
       {error && (
-        <Text fontSize="xs" color="red.500" mt={1}>
+        <Text fontSize="xs" color={chrome.errorText} mt={1}>
           {error}
         </Text>
       )}

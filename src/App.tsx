@@ -168,8 +168,10 @@ function App(props: Props) {
             onRecipeChange={themeEditor.setRecipeOverride}
             onSlotRecipeChange={themeEditor.setSlotRecipeOverride}
             onColorTokenChange={themeEditor.setColorToken}
+            onColorTokenRemove={themeEditor.removeColorToken}
             onFontTokenChange={themeEditor.setFontToken}
             onReset={themeEditor.reset}
+            onResetColors={themeEditor.resetColorTokens}
             onResetComponent={themeEditor.resetEntries} /> }
 
           { !editorMode && <Flex 

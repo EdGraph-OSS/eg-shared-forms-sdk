@@ -1,6 +1,7 @@
 import { NativeSelect } from '@chakra-ui/react'
 import type { RecipeEntryRef } from './recipe-registry'
 import { entryId, isGlobalEntry } from './recipe-registry'
+import { chrome } from './chromeColors'
 
 interface RecipePickerProps {
   entries: RecipeEntryRef[]
@@ -18,10 +19,13 @@ export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps)
 
   return (
     <NativeSelect.Root flexDir='column' size="sm">
-      <label htmlFor="recipe-picker" style={{ fontWeight: 'bold' }}>Select a recipe</label>
+      <label htmlFor="recipe-picker" style={{ fontWeight: 'bold', color: chrome.text }}>Select a recipe</label>
       <NativeSelect.Field
         id='recipe-picker'
         value={entryId(selected)}
+        borderColor={chrome.border}
+        bg={chrome.fieldBg}
+        color={chrome.text}
         onChange={e => {
           const found = entries.find(entry => entryId(entry) === e.target.value)
           if (found) onSelect(found)
@@ -41,7 +45,7 @@ export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps)
           </optgroup>
         )}
       </NativeSelect.Field>
-      <NativeSelect.Indicator />
+      <NativeSelect.Indicator color={chrome.mutedText} />
     </NativeSelect.Root>
   )
 }

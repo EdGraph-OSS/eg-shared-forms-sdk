@@ -41,6 +41,18 @@ export function useThemeEditorState(
     } as ThemeTokens))
   }, [])
 
+  const removeColorToken = useCallback((scale: string, shade: string) => {
+    setTokens(prev => {
+      const overrides = prev.colors as Record<string, Record<string, unknown>> | undefined
+      if (!overrides?.[scale]?.[shade]) return prev
+      const { [shade]: _removed, ...restShades } = overrides[scale]
+      const nextColors = { ...overrides }
+      if (Object.keys(restShades).length > 0) nextColors[scale] = restShades
+      else delete nextColors[scale]
+      return { ...prev, colors: nextColors } as ThemeTokens
+    })
+  }, [])
+
   const setFontToken = useCallback((key: FontTokenKey, value: string) => {
     setTokens(prev => ({
       ...prev,
@@ -55,6 +67,13 @@ export function useThemeEditorState(
     setRecipes({})
     setSlotRecipes({})
     setTokens({})
+  }, [])
+
+  const resetColorTokens = useCallback(() => {
+    setTokens(prev => {
+      const { colors: _colors, ...rest } = prev
+      return rest as ThemeTokens
+    })
   }, [])
 
   const resetEntries = useCallback((entries: RecipeEntryRef[]) => {
@@ -81,8 +100,10 @@ export function useThemeEditorState(
     setRecipeOverride,
     setSlotRecipeOverride,
     setColorToken,
+    removeColorToken,
     setFontToken,
     reset,
+    resetColorTokens,
     resetEntries,
   }
 }

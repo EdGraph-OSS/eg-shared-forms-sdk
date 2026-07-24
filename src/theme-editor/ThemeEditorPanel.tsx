@@ -9,6 +9,7 @@ import { RecipePicker } from './RecipePicker'
 import { ExportPanel } from './ExportPanel'
 import { ColorTokensEditor } from './ColorTokensEditor'
 import { FontTokensEditor } from './FontTokensEditor'
+import { chrome } from './chromeColors'
 import type { FontTokenKey, ThemeTokens } from './useThemeEditorState'
 import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from '../ui'
 
@@ -27,8 +28,10 @@ interface ThemeEditorPanelProps {
   onRecipeChange: (key: keyof RecipesRegistry, value: unknown) => void
   onSlotRecipeChange: (key: keyof SlotRecipesRegistry, value: unknown) => void
   onColorTokenChange: (scale: string, shade: string, value: string) => void
+  onColorTokenRemove: (scale: string, shade: string) => void
   onFontTokenChange: (key: FontTokenKey, value: string) => void
   onReset: () => void
+  onResetColors: () => void
   onResetComponent: (entries: RecipeEntryRef[]) => void
 }
 
@@ -39,8 +42,10 @@ export function ThemeEditorPanel({
   onRecipeChange,
   onSlotRecipeChange,
   onColorTokenChange,
+  onColorTokenRemove,
   onFontTokenChange,
   onReset,
+  onResetColors,
   onResetComponent,
 }: ThemeEditorPanelProps) {
   const [mode, setMode] = useState<EditorMode>('components')
@@ -60,17 +65,29 @@ export function ThemeEditorPanel({
   }
 
   return (
-    <Flex flexDir='column' borderWidth="1px" borderRadius="md" p={4} w='full'>
+    <Flex
+      flexDir='column'
+      borderWidth="1px"
+      borderColor={chrome.border}
+      _dark={{ borderColor: chrome.borderDark }}
+      borderRadius="md"
+      p={4}
+      w='full'
+    >
       <HStack justify="space-between" mb={4}>
-        <Heading size="xl">Theme Editor</Heading>
+        <Heading size="xl" color={chrome.text} _dark={{ color: chrome.textDark }}>Theme Editor</Heading>
           <Button
             fontWeight='bold'
             border='1px solid black'
+            color={chrome.text}
+            bg="transparent"
+            _hover={{ bg: chrome.border }}
+            _dark={{ color: chrome.textDark, _hover: { bg: chrome.borderDark } }}
             size="sm"
-            variant="outline"
             onClick={onReset}>Reset to defaults 🔄</Button>
       </HStack>
       <RadioGroup.Root
+        colorPalette="blackAlpha"
         value={mode}
         onValueChange={e => setMode(e.value as EditorMode)}
         mb={4}
@@ -80,7 +97,7 @@ export function ThemeEditorPanel({
             <RadioGroup.Item key={item.value} value={item.value}>
               <RadioGroup.ItemHiddenInput />
               <RadioGroup.ItemIndicator />
-              <RadioGroup.ItemText>{item.label}</RadioGroup.ItemText>
+              <RadioGroup.ItemText color={chrome.text} _dark={{ color: chrome.textDark }}>{item.label}</RadioGroup.ItemText>
             </RadioGroup.Item>
           ))}
         </HStack>
@@ -92,24 +109,25 @@ export function ThemeEditorPanel({
             <RecipePicker entries={selectedComponent.entries} selected={selected} onSelect={setSelected} />
           </Flex>
           <Flex justifyContent='space-between' mt='16px' w='full'>
-            <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50" _dark={{ bg: 'gray.900' }} w='49%'>
-              <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3} textTransform="uppercase">
+            <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} w='49%'>
+              <Text fontSize="xs" fontWeight="bold" color={chrome.mutedText} mb={3} textTransform="uppercase">
                 {selectedComponent.label} preview
               </Text>
               <ComponentPreview name={selectedComponent.name} />
             </Box>
-            <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50" _dark={{ bg: 'gray.900' }} w='49%'>
+            <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} w='49%'>
               <Flex alignItems='center' w='full'>
-                <Text fontWeight='bold' fontSize="sm" my='16px' color="gray.500">
+                <Text fontWeight='bold' fontSize="sm" my='16px' color={chrome.mutedText}>
                   Editing {selected.kind === 'recipe' ? 'recipe' : 'slot recipe'} "{selected.key}" — changes apply live to the preview above.
                 </Text>
                 <Button
                   bg='white'
+                  color={chrome.text}
                   fontWeight='bold'
                   border='1px solid black'
                   size="xs"
                   ml='auto'
-                  variant="outline"
+                  _hover={{ bg: chrome.border }}
                   onClick={() => onResetComponent(selectedComponent.entries)}>Reset {selectedComponent.label} 🔄</Button>
               </Flex>
               <JsonRecipeEditor
@@ -121,12 +139,12 @@ export function ThemeEditorPanel({
         </VStack>
       )}
       {mode === 'colors' && (
-        <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50" _dark={{ bg: 'gray.900' }}>
-          <ColorTokensEditor tokens={tokens} onChange={onColorTokenChange} />
+        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}>
+          <ColorTokensEditor tokens={tokens} onChange={onColorTokenChange} onRemove={onColorTokenRemove} onReset={onResetColors} />
         </Box>
       )}
       {mode === 'fonts' && (
-        <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50" _dark={{ bg: 'gray.900' }}>
+        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}>
           <FontTokensEditor tokens={tokens} onChange={onFontTokenChange} />
         </Box>
       )}

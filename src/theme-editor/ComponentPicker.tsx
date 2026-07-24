@@ -1,4 +1,5 @@
 import { NativeSelect } from '@chakra-ui/react'
+import { chrome } from './chromeColors'
 import type { ComponentGroup } from './recipe-registry'
 
 interface ComponentPickerProps {
@@ -13,10 +14,13 @@ export function ComponentPicker({ groups, selected, onSelect }: ComponentPickerP
 
   return (
     <NativeSelect.Root flexDir='column' size="sm">
-      <label htmlFor="component-picker" style={{ fontWeight: 'bold' }}>Select Component</label>
+      <label htmlFor="component-picker" style={{ fontWeight: 'bold', color: chrome.text }}>Select Component</label>
       <NativeSelect.Field
         id='component-picker'
         value={selected.name}
+        borderColor={chrome.border}
+        bg={chrome.fieldBg}
+        color={chrome.text}
         onChange={e => {
           const found = groups.find(group => group.name === e.target.value)
           if (found) onSelect(found)
@@ -37,7 +41,7 @@ export function ComponentPicker({ groups, selected, onSelect }: ComponentPickerP
           </optgroup>
         )}
       </NativeSelect.Field>
-      <NativeSelect.Indicator />
+      <NativeSelect.Indicator color={chrome.mutedText} />
     </NativeSelect.Root>
   )
 }

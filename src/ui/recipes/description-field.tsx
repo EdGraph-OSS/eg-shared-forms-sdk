@@ -6,7 +6,7 @@ export const descriptionFieldRecipe = defineRecipe({
   className: 'eg-description-field-recipe',
   base: {
     fontSize: 'sm',
-    color: 'blue.900',
+    color: 'gray.500',
     _dark: { color: 'gray.300' },
   },
 })

@@ -5,6 +5,7 @@ import { fonts } from '../ui/theme'
 import type { ProviderRecipes, ProviderSlotRecipes } from '../ui'
 import type { ThemeTokens } from './useThemeEditorState'
 import { recipeDefaults, slotRecipeDefaults } from './recipe-registry'
+import { chrome } from './chromeColors'
 
 interface ExportPanelProps {
   recipes: ProviderRecipes
@@ -14,7 +15,7 @@ interface ExportPanelProps {
 
 function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>> {
   const overrides = tokens.colors as Record<string, Record<string, { value: string }>> | undefined
-  return Object.fromEntries(
+  const merged: Record<string, Record<string, string>> = Object.fromEntries(
     Object.entries(colors).map(([scale, shades]) => [
       scale,
       Object.fromEntries(
@@ -25,6 +26,15 @@ function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>
       ),
     ]),
   )
+
+  for (const [scale, shades] of Object.entries(overrides ?? {})) {
+    merged[scale] = merged[scale] ?? {}
+    for (const [shade, token] of Object.entries(shades)) {
+      merged[scale][shade] = token.value
+    }
+  }
+
+  return merged
 }
 
 function mergeFonts(tokens: ThemeTokens): Record<string, string> {
@@ -56,10 +66,28 @@ export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) 
   return (
     <Box>
       <HStack justify="space-between" mb={2}>
-        <Box fontWeight="semibold" fontSize="sm">Exported theme</Box>
-        <Button size="xs" onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</Button>
+        <Box fontWeight="semibold" fontSize="sm" color={chrome.text}>Exported theme</Box>
+        <Button
+          size="xs"
+          bg={chrome.buttonBg}
+          color="white"
+          _hover={{ bg: chrome.buttonBgHover }}
+          onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</Button>
       </HStack>
-      <Code as="pre" display="block" whiteSpace="pre" overflowX="auto" maxH="240px" overflowY="auto" p={3} fontSize="xs">
+      <Code
+        as="pre"
+        display="block"
+        whiteSpace="pre"
+        overflowX="auto"
+        maxH="240px"
+        overflowY="auto"
+        p={3}
+        fontSize="xs"
+        bg={chrome.panelBg}
+        color={chrome.text}
+        borderWidth="1px"
+        borderColor={chrome.border}
+      >
         {code}
       </Code>
     </Box>
