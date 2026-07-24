@@ -17,7 +17,7 @@ import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
  * options), surfaced here as `props.options`:
  *   'ui:widget': 'InfoMessageWidget'
  *   'ui:options':
- *     styles: Chakra SystemStyleObject applied to the container (bg, border, padding, …)
+ *     customStyles: Chakra SystemStyleObject applied to the container (bg, border, padding, …)
  *     preText:      bold lead-in text (e.g. "🔒 Your privacy matters: ")
  *     text:         body text following the lead-in
  *     body:         optional paragraph rendered below the preText/text line and above the list
@@ -26,7 +26,7 @@ import { useSingleRecipeStyles } from '../../ui/use-recipe-styles'
 export default function InfoMessageWidget(props: WidgetProps) {
   const options = (props.options ?? {}) as Record<string, unknown>
   const recipeStyles = useSingleRecipeStyles('infoMessage', infoMessageRecipe)()
-  const styles = { ...recipeStyles, ...(options.styles as SystemStyleObject | undefined ?? {}) }
+  const styles = { ...recipeStyles, ...(options.customStyles as SystemStyleObject | undefined ?? {}) }
   const preText = typeof options.preText === 'string' ? options.preText : ''
   const text = typeof options.text === 'string' ? options.text : ''
   const body = typeof options.body === 'string' ? options.body : ''
