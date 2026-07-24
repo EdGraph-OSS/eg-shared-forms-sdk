@@ -94,7 +94,14 @@ function extractFontFaceHrefs(tokens?: ThemingConfig['tokens']): Record<string, 
   )
 }
 
-export interface ProviderProps extends ColorModeProviderProps {
+/**
+ * The theme-customization surface of `Provider` — recipes/slotRecipes/tokens overrides,
+ * with no rendering-related props mixed in. This is also exactly the shape
+ * `ThemeEditorPanel`'s export produces, so a previously-exported theme object can be fed
+ * straight back in as-is: as the initial state for `useThemeEditorState`, or spread
+ * directly onto `<Provider {...theme} />`.
+ */
+export interface ThemeConfig {
   /**
    * Override or extend the package's single-part recipes (fieldError, submitButton,
    * titleHeading, formDescription, descriptionField, objectFieldCustomContainer, fieldHeader,
@@ -124,6 +131,8 @@ export interface ProviderProps extends ColorModeProviderProps {
    */
   tokens?: ThemingConfig['tokens']
 }
+
+export interface ProviderProps extends ColorModeProviderProps, ThemeConfig {}
 
 export function Provider({ recipes, slotRecipes, tokens, ...props }: ProviderProps) {
   console.log('recipes', recipes)

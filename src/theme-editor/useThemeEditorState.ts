@@ -1,18 +1,18 @@
 import { useCallback, useState } from 'react'
 import type { ThemingConfig } from '@chakra-ui/react'
-import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from '../ui'
+import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry, ThemeConfig } from '../ui'
 import type { RecipeEntryRef } from './recipe-registry'
 
 export type ThemeTokens = NonNullable<ThemingConfig['tokens']>
 export type FontTokenKey = 'heading' | 'body' | 'mono'
 
-export function useThemeEditorState(
-  initialRecipes: ProviderRecipes = {},
-  initialSlotRecipes: ProviderSlotRecipes = {},
-) {
-  const [recipes, setRecipes] = useState<ProviderRecipes>(initialRecipes)
-  const [slotRecipes, setSlotRecipes] = useState<ProviderSlotRecipes>(initialSlotRecipes)
-  const [tokens, setTokens] = useState<ThemeTokens>({})
+// `initialTheme` is shaped like `ThemeConfig` — the same `{ recipes, slotRecipes, tokens }`
+// object `ExportPanel` produces — so a previously-exported theme can be loaded back in
+// as-is to seed the editor.
+export function useThemeEditorState(initialTheme: ThemeConfig = {}) {
+  const [recipes, setRecipes] = useState<ProviderRecipes>(initialTheme.recipes ?? {})
+  const [slotRecipes, setSlotRecipes] = useState<ProviderSlotRecipes>(initialTheme.slotRecipes ?? {})
+  const [tokens, setTokens] = useState<ThemeTokens>(initialTheme.tokens ?? {})
 
   // Values come from a hand-typed JSON editor, so there's no compile-time guarantee
   // they match the recipe's real shape — accept `unknown` here rather than pretending

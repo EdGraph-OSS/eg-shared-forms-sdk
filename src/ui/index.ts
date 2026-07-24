@@ -1,5 +1,5 @@
 import { Provider } from "./provider"
-import type { ProviderProps, ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from "./provider"
+import type { ProviderProps, ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry, ThemeConfig } from "./provider"
 import { toaster, Toaster } from "./toaster"
 import { useRecipeStyles, useSingleRecipeStyles } from "./use-recipe-styles"
 import { Tooltip } from "./tooltip"
@@ -69,4 +69,4 @@ export {
   dateDropdownRecipe,
 }
 
-export type { ProviderProps, ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry }
+export type { ProviderProps, ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry, ThemeConfig }

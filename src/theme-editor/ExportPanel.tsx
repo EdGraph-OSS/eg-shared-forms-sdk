@@ -19,15 +19,19 @@ interface ExportPanelProps {
   themeVersion: string
 }
 
-function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>> {
+// Colors/fonts are wrapped in Chakra's `{ value }` token format (matching `tokens.colors`/
+// `tokens.fonts` in `Provider`) and nested under `tokens`, so the exported JSON is shaped
+// exactly like `ProviderProps` — pasting it straight into `<Provider {...theme} />` is enough
+// on its own, no reshaping required.
+function mergeColors(tokens: ThemeTokens): Record<string, Record<string, { value: string }>> {
   const overrides = tokens.colors as Record<string, Record<string, { value: string }>> | undefined
-  const merged: Record<string, Record<string, string>> = Object.fromEntries(
+  const merged: Record<string, Record<string, { value: string }>> = Object.fromEntries(
     Object.entries(colors).map(([scale, shades]) => [
       scale,
       Object.fromEntries(
         Object.keys(shades).map(shade => [
           shade,
-          overrides?.[scale]?.[shade]?.value ?? (shades as Record<string, string>)[shade],
+          { value: overrides?.[scale]?.[shade]?.value ?? (shades as Record<string, string>)[shade] },
         ]),
       ),
     ]),
@@ -36,28 +40,29 @@ function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>
   for (const [scale, shades] of Object.entries(overrides ?? {})) {
     merged[scale] = merged[scale] ?? {}
     for (const [shade, token] of Object.entries(shades)) {
-      merged[scale][shade] = token.value
+      merged[scale][shade] = { value: token.value }
     }
   }
 
   return merged
 }
 
-function mergeFonts(tokens: ThemeTokens): Record<string, string> {
-  const overrides = tokens.fonts as Record<string, { value: string }> | undefined
-  return Object.fromEntries(
-    Object.keys(fonts).map(key => [key, overrides?.[key]?.value ?? (fonts as Record<string, string>)[key]]),
-  )
-}
-
-// Only custom fonts (e.g. picked via the Google Fonts selector) carry an `href` —
-// the package defaults don't, since they're bundled at build time via @fontsource.
-// Surfacing it here means pasting this export's `tokens` back into `Provider` is
-// enough for the font to actually render, not just resolve to the CSS string.
-function mergeFontFaces(tokens: ThemeTokens): Record<string, string> {
+// A font token's `href` (e.g. picked via the Google Fonts selector) is folded in alongside
+// its `value` — the package defaults don't carry one, since they're bundled at build time
+// via @fontsource.
+function mergeFonts(tokens: ThemeTokens): Record<string, { value: string; href?: string }> {
   const overrides = tokens.fonts as Record<string, { value: string; href?: string }> | undefined
   return Object.fromEntries(
-    Object.entries(overrides ?? {}).flatMap(([key, token]) => (token?.href ? [[key, token.href]] : [])),
+    Object.keys(fonts).map(key => {
+      const override = overrides?.[key]
+      return [
+        key,
+        {
+          value: override?.value ?? (fonts as Record<string, string>)[key],
+          ...(override?.href ? { href: override.href } : {}),
+        },
+      ]
+    }),
   )
 }
 
@@ -65,13 +70,13 @@ export function ExportPanel({ recipes, slotRecipes, tokens, themeName, themeVers
   const canExport = themeName.trim().length > 0 && themeVersion.trim().length > 0
 
   const code = useMemo(() => {
-    const fontFaces = mergeFontFaces(tokens)
     const theme = {
-      colors: mergeColors(tokens),
-      fonts: mergeFonts(tokens),
-      ...(Object.keys(fontFaces).length > 0 ? { fontFaces } : {}),
       recipes: { ...recipeDefaults, ...recipes },
       slotRecipes: { ...slotRecipeDefaults, ...slotRecipes },
+      tokens: {
+        colors: mergeColors(tokens),
+        fonts: mergeFonts(tokens),
+      },
     }
     return JSON.stringify(theme, null, 2)
   }, [recipes, slotRecipes, tokens])
