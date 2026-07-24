@@ -148,7 +148,14 @@ export function ThemeEditorPanel({
         </HStack>
       </RadioGroup.Root>
       {mode === 'components' && (
-        <VStack flexDir='column' align="stretch" gap={3}>
+        <VStack
+          key={mode}
+          flexDir='column'
+          align="stretch"
+          gap={3}
+          animationName="fade-in, slide-from-bottom"
+          animationDuration="0.25s"
+          animationTimingFunction="ease-out">
           <Flex flexDir='column' gap='16px' w='350px'>
             <ComponentPicker groups={componentGroups} selected={selectedComponent} onSelect={handleSelectComponent} />
             <RecipePicker entries={selectedComponent.entries} selected={selected} onSelect={setSelected} />
@@ -183,12 +190,32 @@ export function ThemeEditorPanel({
         </VStack>
       )}
       {mode === 'colors' && (
-        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}>
+        <Box
+          key={mode}
+          borderWidth="1px"
+          borderColor={chrome.border}
+          borderRadius="md"
+          p={4}
+          bg={chrome.panelBg}
+          _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}
+          animationName="fade-in, slide-from-bottom"
+          animationDuration="0.25s"
+          animationTimingFunction="ease-out">
           <ColorTokensEditor tokens={tokens} onChange={onColorTokenChange} onRemove={onColorTokenRemove} onReset={onResetColors} />
         </Box>
       )}
       {mode === 'fonts' && (
-        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}>
+        <Box
+          key={mode}
+          borderWidth="1px"
+          borderColor={chrome.border}
+          borderRadius="md"
+          p={4}
+          bg={chrome.panelBg}
+          _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }}
+          animationName="fade-in, slide-from-bottom"
+          animationDuration="0.25s"
+          animationTimingFunction="ease-out">
           <FontTokensEditor tokens={tokens} onChange={onFontTokenChange} />
         </Box>
       )}
