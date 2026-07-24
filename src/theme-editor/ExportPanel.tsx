@@ -71,6 +71,10 @@ export function ExportPanel({ recipes, slotRecipes, tokens, themeName, themeVers
 
   const code = useMemo(() => {
     const theme = {
+      // Editor-only metadata, ignored by `Provider` — carried along so the
+      // theme editor's "Load theme" file field can restore the name/version
+      // fields alongside the recipes/slotRecipes/tokens below.
+      meta: { name: themeName, version: themeVersion },
       recipes: { ...recipeDefaults, ...recipes },
       slotRecipes: { ...slotRecipeDefaults, ...slotRecipes },
       tokens: {
@@ -79,7 +83,7 @@ export function ExportPanel({ recipes, slotRecipes, tokens, themeName, themeVers
       },
     }
     return JSON.stringify(theme, null, 2)
-  }, [recipes, slotRecipes, tokens])
+  }, [recipes, slotRecipes, tokens, themeName, themeVersion])
 
   const handleExport = () => {
     if (!canExport) return

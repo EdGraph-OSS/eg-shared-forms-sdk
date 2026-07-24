@@ -1,18 +1,18 @@
-import Form from '@rjsf/chakra-ui'
-import { RegistryFieldsType, RegistryWidgetsType, RJSFValidationError } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
-import { useEffect, useState } from 'react'
 import React from 'react'
+import { Provider } from './ui'
+import Form from '@rjsf/chakra-ui'
+import sampleForm from './sample-form'
+import { aggregateForm } from './utils/form'
+import { humanizeRjsfErrors } from './utils'
+import { useEffect, useState } from 'react'
+import validator from '@rjsf/validator-ajv8'
 import { Flex, Text } from '@chakra-ui/react'
 import TitleFieldTemplate from './components/templates/TitleFieldTemplate'
+import { RegistryFieldsType, RegistryWidgetsType, RJSFValidationError } from '@rjsf/utils'
 import { ComponentType, IForm, IFormComponent, IFormQuestion, IFormSection } from './models/form'
 import { CustomFieldTemplate, DescriptionFieldTemplate, ErrorListTemplate, FieldErrorTemplate, ObjectFieldTemplate, SubmitButton } from './components/templates'
 import { CheckboxCardsField, ContactVerificationField, CurrentUserName, DateDropdownWidget, DateFieldWidget, EmailFieldWidget, HtmlFieldWidget, ImageFieldWidget, InfoCardWidget, InfoMessageWidget, InputFieldWidget, NumberFieldWidget, OrFieldWidget, PhoneFieldWidget, RadioCardsField, RadioFieldWidget, ScoringFieldWidget, SectionPicker, SelectFieldWidget, VerificationCodeWidget } from './components/widgets'
-import { Provider } from './ui'
-import { aggregateForm } from './utils/form'
-import { humanizeRjsfErrors } from './utils'
 import { createConditionalRequiredCustomValidate } from './utils/conditionalRequiredValidate'
-import sampleForm from './sample-form'
 
 const { form, sections, questions } = sampleForm
 
@@ -20,9 +20,6 @@ interface DevModeProps {
   readonly?: boolean
 }
 
-// Renders the sample form standalone, with its own `Provider` — independent of
-// whatever theme `EditorMode` currently has loaded, so its unsaved edits don't
-// leak into this preview.
 export function DevMode({ readonly }: DevModeProps) {
   const components: IFormComponent[] = [
     {

@@ -1,8 +1,6 @@
 import { Provider } from './ui'
 import { ThemeEditorPanel, useThemeEditorState } from './theme-editor'
 
-// Renders the theme editor with its own `Provider`, live-bound to the editor's
-// in-progress recipes/slotRecipes/tokens — independent of `DevMode`'s theme.
 export function EditorMode() {
   const themeEditor = useThemeEditorState()
 
@@ -22,7 +20,8 @@ export function EditorMode() {
         onFontTokenChange={themeEditor.setFontToken}
         onReset={themeEditor.reset}
         onResetColors={themeEditor.resetColorTokens}
-        onResetComponent={themeEditor.resetEntries} />
+        onResetComponent={themeEditor.resetEntries}
+        onLoadTheme={themeEditor.loadTheme} />
     </Provider>
   )
 }

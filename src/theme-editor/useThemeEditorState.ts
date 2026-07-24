@@ -80,6 +80,15 @@ export function useThemeEditorState(initialTheme: ThemeConfig = {}) {
     })
   }, [])
 
+  // Loading a previously-exported theme file replaces recipes/slotRecipes/tokens
+  // wholesale rather than merging — the file is the new source of truth, so any
+  // in-progress overrides not present in it should be dropped, same as `reset`.
+  const loadTheme = useCallback((theme: ThemeConfig) => {
+    setRecipes(theme.recipes ?? {})
+    setSlotRecipes(theme.slotRecipes ?? {})
+    setTokens((theme.tokens ?? {}) as ThemeTokens)
+  }, [])
+
   const resetEntries = useCallback((entries: RecipeEntryRef[]) => {
     setRecipes(prev => {
       const next = { ...prev }
@@ -109,5 +118,6 @@ export function useThemeEditorState(initialTheme: ThemeConfig = {}) {
     reset,
     resetColorTokens,
     resetEntries,
+    loadTheme,
   }
 }

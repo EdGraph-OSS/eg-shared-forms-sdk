@@ -11,7 +11,7 @@ import { ColorTokensEditor } from './ColorTokensEditor'
 import { FontTokensEditor } from './FontTokensEditor'
 import { chrome } from './chromeColors'
 import type { FontTokenKey, ThemeTokens } from './useThemeEditorState'
-import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry } from '../ui'
+import type { ProviderRecipes, ProviderSlotRecipes, RecipesRegistry, SlotRecipesRegistry, ThemeConfig } from '../ui'
 
 type EditorMode = 'components' | 'colors' | 'fonts'
 
@@ -33,6 +33,7 @@ interface ThemeEditorPanelProps {
   onReset: () => void
   onResetColors: () => void
   onResetComponent: (entries: RecipeEntryRef[]) => void
+  onLoadTheme: (theme: ThemeConfig) => void
 }
 
 export function ThemeEditorPanel({
@@ -47,6 +48,7 @@ export function ThemeEditorPanel({
   onReset,
   onResetColors,
   onResetComponent,
+  onLoadTheme,
 }: ThemeEditorPanelProps) {
   const [mode, setMode] = useState<EditorMode>('components')
   const [selectedComponent, setSelectedComponent] = useState<ComponentGroup>(componentGroups[0])
@@ -64,6 +66,24 @@ export function ThemeEditorPanel({
   const handleChange = (parsed: unknown) => {
     if (selected.kind === 'recipe') onRecipeChange(selected.key, parsed)
     else onSlotRecipeChange(selected.key, parsed)
+  }
+
+  const handleLoadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result as string)
+        onLoadTheme(parsed)
+        if (typeof parsed?.meta?.name === 'string') setThemeName(parsed.meta.name)
+        if (typeof parsed?.meta?.version === 'string') setThemeVersion(parsed.meta.version)
+      } catch {
+        // Ignore malformed/non-JSON files — the editor state is left untouched.
+      }
+    }
+    reader.readAsText(file)
   }
 
   return (
@@ -126,6 +146,23 @@ export function ThemeEditorPanel({
             inputMode="numeric"
             value={themeVersion}
             onChange={e => setThemeVersion(e.target.value.replace(/\D/g, ''))} />
+        </Box>
+        <Box>
+          <Text fontSize="16px" fontWeight="bold" mb={1}>
+            Load theme
+          </Text>
+          <Input
+            size="sm"
+            w="220px"
+            p="4px"
+            borderColor={chrome.border}
+            bg={chrome.fieldBg}
+            color={chrome.text}
+            _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}
+            _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }}
+            type="file"
+            accept="application/json"
+            onChange={handleLoadFile} />
         </Box>
       </HStack>
       <Text fontWeight='bold'>Select Mode</Text>
