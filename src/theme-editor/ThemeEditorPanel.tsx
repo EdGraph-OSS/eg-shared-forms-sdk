@@ -86,18 +86,21 @@ export function ThemeEditorPanel({
             size="sm"
             onClick={onReset}>Reset to defaults 🔄</Button>
       </HStack>
+      <Text fontWeight='bold'>Select Mode</Text>
       <RadioGroup.Root
         colorPalette="blackAlpha"
         value={mode}
+        mt='8px'
         onValueChange={e => setMode(e.value as EditorMode)}
-        mb={4}
-      >
+        mb={4}>
         <HStack gap={5}>
           {EDITOR_MODES.map(item => (
             <RadioGroup.Item key={item.value} value={item.value}>
               <RadioGroup.ItemHiddenInput />
               <RadioGroup.ItemIndicator />
-              <RadioGroup.ItemText color={chrome.text} _dark={{ color: chrome.textDark }}>{item.label}</RadioGroup.ItemText>
+              <RadioGroup.ItemText color={chrome.text} fontWeight='bold' _dark={{ color: chrome.textDark }}>
+                {item.label}
+              </RadioGroup.ItemText>
             </RadioGroup.Item>
           ))}
         </HStack>

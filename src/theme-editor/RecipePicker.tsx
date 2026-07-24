@@ -25,6 +25,7 @@ export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps)
         value={entryId(selected)}
         borderColor={chrome.border}
         bg={chrome.fieldBg}
+        mt='8px'
         color={chrome.text}
         onChange={e => {
           const found = entries.find(entry => entryId(entry) === e.target.value)

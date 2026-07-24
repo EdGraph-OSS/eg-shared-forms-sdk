@@ -14,12 +14,17 @@ export function ComponentPicker({ groups, selected, onSelect }: ComponentPickerP
 
   return (
     <NativeSelect.Root flexDir='column' size="sm">
-      <label htmlFor="component-picker" style={{ fontWeight: 'bold', color: chrome.text }}>Select Component</label>
+      <label 
+        htmlFor="component-picker" 
+        style={{ fontWeight: 'bold', color: chrome.text }}>
+        Select Component
+      </label>
       <NativeSelect.Field
         id='component-picker'
         value={selected.name}
         borderColor={chrome.border}
         bg={chrome.fieldBg}
+        mt='8px'
         color={chrome.text}
         onChange={e => {
           const found = groups.find(group => group.name === e.target.value)
