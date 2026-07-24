@@ -53,12 +53,16 @@ export function useThemeEditorState(
     })
   }, [])
 
-  const setFontToken = useCallback((key: FontTokenKey, value: string) => {
+  // `href` is an optional loader hint (e.g. a Google Fonts stylesheet URL) carried
+  // alongside the CSS value — Chakra ignores the extra key, but `Provider` and
+  // `ExportPanel` read it back out to actually load the font asset. Omitting it
+  // (e.g. after a manual edit) drops any previously-set href for that key.
+  const setFontToken = useCallback((key: FontTokenKey, value: string, href?: string) => {
     setTokens(prev => ({
       ...prev,
       fonts: {
         ...(prev.fonts as Record<string, unknown> | undefined),
-        [key]: { value },
+        [key]: href ? { value, href } : { value },
       },
     } as ThemeTokens))
   }, [])

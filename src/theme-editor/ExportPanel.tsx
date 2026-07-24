@@ -1,11 +1,15 @@
-import { useMemo, useState } from 'react'
-import { Box, Button, Code, HStack } from '@chakra-ui/react'
+import { useMemo } from 'react'
+import { Box, Button, HStack } from '@chakra-ui/react'
+import CodeMirror from '@uiw/react-codemirror'
+import { json } from '@codemirror/lang-json'
 import { colors } from '../ui'
 import { fonts } from '../ui/theme'
 import type { ProviderRecipes, ProviderSlotRecipes } from '../ui'
 import type { ThemeTokens } from './useThemeEditorState'
 import { recipeDefaults, slotRecipeDefaults } from './recipe-registry'
 import { chrome } from './chromeColors'
+
+const extensions = [json()]
 
 interface ExportPanelProps {
   recipes: ProviderRecipes
@@ -44,52 +48,66 @@ function mergeFonts(tokens: ThemeTokens): Record<string, string> {
   )
 }
 
+// Only custom fonts (e.g. picked via the Google Fonts selector) carry an `href` —
+// the package defaults don't, since they're bundled at build time via @fontsource.
+// Surfacing it here means pasting this export's `tokens` back into `Provider` is
+// enough for the font to actually render, not just resolve to the CSS string.
+function mergeFontFaces(tokens: ThemeTokens): Record<string, string> {
+  const overrides = tokens.fonts as Record<string, { value: string; href?: string }> | undefined
+  return Object.fromEntries(
+    Object.entries(overrides ?? {}).flatMap(([key, token]) => (token?.href ? [[key, token.href]] : [])),
+  )
+}
+
 export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) {
   const code = useMemo(() => {
+    const fontFaces = mergeFontFaces(tokens)
     const theme = {
       colors: mergeColors(tokens),
       fonts: mergeFonts(tokens),
+      ...(Object.keys(fontFaces).length > 0 ? { fontFaces } : {}),
       recipes: { ...recipeDefaults, ...recipes },
       slotRecipes: { ...slotRecipeDefaults, ...slotRecipes },
     }
     return JSON.stringify(theme, null, 2)
   }, [recipes, slotRecipes, tokens])
 
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+  const handleExport = () => {
+    const blob = new Blob([code], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'theme.json'
+    link.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
     <Box>
-      <HStack justify="space-between" mb={2}>
+      <HStack mt='32px' justify="space-between" mb={2}>
         <Box fontWeight="semibold" fontSize="sm" color={chrome.text}>Exported theme</Box>
         <Button
           size="xs"
           bg={chrome.buttonBg}
           color="white"
+          w='150px'
           _hover={{ bg: chrome.buttonBgHover }}
-          onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</Button>
+          onClick={handleExport}>Export</Button>
       </HStack>
-      <Code
-        as="pre"
-        display="block"
-        whiteSpace="pre"
-        overflowX="auto"
-        maxH="240px"
+      <Box
+        maxH="480px"
         overflowY="auto"
-        p={3}
         fontSize="xs"
         bg={chrome.panelBg}
-        color={chrome.text}
         borderWidth="1px"
-        borderColor={chrome.border}
-      >
-        {code}
-      </Code>
+        borderColor={chrome.border}>
+        <CodeMirror
+          value={code}
+          extensions={extensions}
+          editable={false}
+          basicSetup={{ highlightActiveLine: false }}
+        />
+      </Box>
     </Box>
   )
 }

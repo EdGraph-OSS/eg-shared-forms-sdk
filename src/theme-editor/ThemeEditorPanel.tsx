@@ -29,7 +29,7 @@ interface ThemeEditorPanelProps {
   onSlotRecipeChange: (key: keyof SlotRecipesRegistry, value: unknown) => void
   onColorTokenChange: (scale: string, shade: string, value: string) => void
   onColorTokenRemove: (scale: string, shade: string) => void
-  onFontTokenChange: (key: FontTokenKey, value: string) => void
+  onFontTokenChange: (key: FontTokenKey, value: string, href?: string) => void
   onReset: () => void
   onResetColors: () => void
   onResetComponent: (entries: RecipeEntryRef[]) => void
