@@ -13,40 +13,43 @@ export function ComponentPicker({ groups, selected, onSelect }: ComponentPickerP
   const templates = groups.filter(group => group.kind === 'template')
 
   return (
-    <NativeSelect.Root flexDir='column' size="sm">
-      <label 
-        htmlFor="component-picker" 
+    <div>
+      <label
+        htmlFor="component-picker"
         style={{ fontWeight: 'bold', color: chrome.text }}>
         Select Component
       </label>
-      <NativeSelect.Field
-        id='component-picker'
-        value={selected.name}
-        borderColor={chrome.border}
-        bg={chrome.fieldBg}
-        mt='8px'
-        color={chrome.text}
-        onChange={e => {
-          const found = groups.find(group => group.name === e.target.value)
-          if (found) onSelect(found)
-        }}
-      >
-        {widgets.length > 0 && (
-          <optgroup label="Widgets">
-            {widgets.map(group => (
-              <option key={group.name} value={group.name}>{group.label}</option>
-            ))}
-          </optgroup>
-        )}
-        {templates.length > 0 && (
-          <optgroup label="Templates">
-            {templates.map(group => (
-              <option key={group.name} value={group.name}>{group.label}</option>
-            ))}
-          </optgroup>
-        )}
-      </NativeSelect.Field>
-      <NativeSelect.Indicator color={chrome.mutedText} />
-    </NativeSelect.Root>
+      <NativeSelect.Root size="sm" mt='8px'>
+        <NativeSelect.Field
+          id='component-picker'
+          value={selected.name}
+          borderColor={chrome.border}
+          bg={chrome.fieldBg}
+          color={chrome.text}
+          _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}
+          _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }}
+          onChange={e => {
+            const found = groups.find(group => group.name === e.target.value)
+            if (found) onSelect(found)
+          }}
+        >
+          {widgets.length > 0 && (
+            <optgroup label="Widgets">
+              {widgets.map(group => (
+                <option key={group.name} value={group.name}>{group.label}</option>
+              ))}
+            </optgroup>
+          )}
+          {templates.length > 0 && (
+            <optgroup label="Templates">
+              {templates.map(group => (
+                <option key={group.name} value={group.name}>{group.label}</option>
+              ))}
+            </optgroup>
+          )}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator color={chrome.mutedText} />
+      </NativeSelect.Root>
+    </div>
   )
 }

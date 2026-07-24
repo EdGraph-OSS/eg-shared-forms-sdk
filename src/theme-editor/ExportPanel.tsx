@@ -15,6 +15,8 @@ interface ExportPanelProps {
   recipes: ProviderRecipes
   slotRecipes: ProviderSlotRecipes
   tokens: ThemeTokens
+  themeName: string
+  themeVersion: string
 }
 
 function mergeColors(tokens: ThemeTokens): Record<string, Record<string, string>> {
@@ -59,7 +61,9 @@ function mergeFontFaces(tokens: ThemeTokens): Record<string, string> {
   )
 }
 
-export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) {
+export function ExportPanel({ recipes, slotRecipes, tokens, themeName, themeVersion }: ExportPanelProps) {
+  const canExport = themeName.trim().length > 0 && themeVersion.trim().length > 0
+
   const code = useMemo(() => {
     const fontFaces = mergeFontFaces(tokens)
     const theme = {
@@ -73,11 +77,13 @@ export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) 
   }, [recipes, slotRecipes, tokens])
 
   const handleExport = () => {
+    if (!canExport) return
+    const slug = themeName.trim().replace(/\s+/g, '-')
     const blob = new Blob([code], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'theme.json'
+    link.download = `${slug}-v${themeVersion.trim()}.json`
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -85,28 +91,36 @@ export function ExportPanel({ recipes, slotRecipes, tokens }: ExportPanelProps) 
   return (
     <Box>
       <HStack mt='32px' justify="space-between" mb={2}>
-        <Box fontWeight="semibold" fontSize="sm" color={chrome.text}>Exported theme</Box>
+        <Box 
+          fontWeight="semibold" 
+          fontSize="xl" 
+          color={chrome.text}>Custom Theme</Box>
         <Button
-          size="xs"
-          bg={chrome.buttonBg}
+          bg={chrome.primaryBrand}
           color="white"
+          fontWeight='bold'
+          size="xs"
           w='150px'
           _hover={{ bg: chrome.buttonBgHover }}
+          _disabled={{ opacity: 0.5, cursor: 'not-allowed', _hover: { bg: chrome.buttonBg } }}
+          disabled={!canExport}
+          title={canExport ? undefined : 'Enter a theme name and version before exporting'}
           onClick={handleExport}>Export</Button>
       </HStack>
       <Box
+        borderRadius='md'
         maxH="480px"
         overflowY="auto"
         fontSize="xs"
         bg={chrome.panelBg}
         borderWidth="1px"
-        borderColor={chrome.border}>
+        borderColor={chrome.border}
+        _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}>
         <CodeMirror
           value={code}
           extensions={extensions}
           editable={false}
-          basicSetup={{ highlightActiveLine: false }}
-        />
+          basicSetup={{ highlightActiveLine: false }} />
       </Box>
     </Box>
   )

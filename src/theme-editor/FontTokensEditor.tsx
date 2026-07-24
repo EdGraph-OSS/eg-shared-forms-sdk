@@ -33,6 +33,8 @@ export function FontTokensEditor({ tokens, onChange }: FontTokensEditorProps) {
                 borderColor={chrome.border}
                 bg={chrome.fieldBg}
                 color={chrome.text}
+                _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}
+                _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }}
                 value={googleFamily}
                 onChange={e => {
                   const family = e.target.value
@@ -61,6 +63,8 @@ export function FontTokensEditor({ tokens, onChange }: FontTokensEditorProps) {
               borderColor={chrome.border}
               bg={chrome.fieldBg}
               color={chrome.text}
+              _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}
+              _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }}
               value={value}
               onChange={e => onChange(key, e.target.value)}
               mb={3}

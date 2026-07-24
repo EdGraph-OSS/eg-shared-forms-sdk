@@ -70,10 +70,9 @@ export function ColorTokensEditor({ tokens, onChange, onRemove, onReset }: Color
         </Text>
         <Button
           fontWeight='bold'
-          border='1px solid black'
-          color={chrome.text}
-          bg="transparent"
-          _hover={{ bg: chrome.border }}
+          color="white"
+          bg={chrome.buttonBg}
+          _hover={{ bg: chrome.buttonBgHover }}
           size="xs"
           onClick={onReset}>Reset colors 🔄</Button>
       </HStack>
@@ -84,8 +83,8 @@ export function ColorTokensEditor({ tokens, onChange, onRemove, onReset }: Color
           onChange={e => setNewValue(e.target.value)}
           style={{ width: 40, height: 40, padding: 0, border: 'none', background: 'none', flexShrink: 0 }}
         />
-        <Input size="sm" borderColor={chrome.border} bg={chrome.fieldBg} color={chrome.text} placeholder="scale (e.g. blue)" value={newScale} onChange={e => setNewScale(e.target.value)} />
-        <Input size="sm" borderColor={chrome.border} bg={chrome.fieldBg} color={chrome.text} placeholder="shade (e.g. 1000)" value={newShade} onChange={e => setNewShade(e.target.value)} />
+        <Input size="sm" borderColor={chrome.border} bg={chrome.fieldBg} color={chrome.text} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }} placeholder="scale (e.g. blue)" value={newScale} onChange={e => setNewScale(e.target.value)} />
+        <Input size="sm" borderColor={chrome.border} bg={chrome.fieldBg} color={chrome.text} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }} placeholder="shade (e.g. 1000)" value={newShade} onChange={e => setNewShade(e.target.value)} />
         <Button size="sm" bg={chrome.buttonBg} color="white" _hover={{ bg: chrome.buttonBgHover }} onClick={handleAdd} disabled={!canAdd}>Add</Button>
       </HStack>
       <VStack align="stretch" mt='16px' gap={5}>

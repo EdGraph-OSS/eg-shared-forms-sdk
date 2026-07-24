@@ -18,35 +18,38 @@ export function RecipePicker({ entries, selected, onSelect }: RecipePickerProps)
   const slotRecipes = entries.filter(entry => entry.kind === 'slotRecipe')
 
   return (
-    <NativeSelect.Root flexDir='column' size="sm">
+    <div>
       <label htmlFor="recipe-picker" style={{ fontWeight: 'bold', color: chrome.text }}>Select a recipe</label>
-      <NativeSelect.Field
-        id='recipe-picker'
-        value={entryId(selected)}
-        borderColor={chrome.border}
-        bg={chrome.fieldBg}
-        mt='8px'
-        color={chrome.text}
-        onChange={e => {
-          const found = entries.find(entry => entryId(entry) === e.target.value)
-          if (found) onSelect(found)
-        }}>
-        {recipes.length > 0 && (
-          <optgroup label="Recipes">
-            {recipes.map(entry => (
-              <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
-            ))}
-          </optgroup>
-        )}
-        {slotRecipes.length > 0 && (
-          <optgroup label="Slot Recipes">
-            {slotRecipes.map(entry => (
-              <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
-            ))}
-          </optgroup>
-        )}
-      </NativeSelect.Field>
-      <NativeSelect.Indicator color={chrome.mutedText} />
-    </NativeSelect.Root>
+      <NativeSelect.Root size="sm" mt='8px'>
+        <NativeSelect.Field
+          id='recipe-picker'
+          value={entryId(selected)}
+          borderColor={chrome.border}
+          bg={chrome.fieldBg}
+          color={chrome.text}
+          _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }}
+          _focusVisible={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 0 1px ${chrome.primaryBrand}` }}
+          onChange={e => {
+            const found = entries.find(entry => entryId(entry) === e.target.value)
+            if (found) onSelect(found)
+          }}>
+          {recipes.length > 0 && (
+            <optgroup label="Recipes">
+              {recipes.map(entry => (
+                <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
+              ))}
+            </optgroup>
+          )}
+          {slotRecipes.length > 0 && (
+            <optgroup label="Slot Recipes">
+              {slotRecipes.map(entry => (
+                <option key={entryId(entry)} value={entryId(entry)}>{optionLabel(entry)}</option>
+              ))}
+            </optgroup>
+          )}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator color={chrome.mutedText} />
+      </NativeSelect.Root>
+    </div>
   )
 }
