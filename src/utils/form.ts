@@ -380,6 +380,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
         const cardOpts = (qUi['ui:options'] ?? {}) as Record<string, unknown>
         const parsed = parseRadioCards(cardOpts.cards)
         question.cards = parsed.length ? parsed : undefined
+        question.styles = (cardOpts.customStyles && typeof cardOpts.customStyles === 'object') ? cardOpts.customStyles as Record<string, unknown> : undefined
       }
       if (qType === QuestionType.ContactVerification) {
         const cvOpts = (qUi['ui:options'] ?? {}) as Record<string, unknown>
@@ -720,13 +721,19 @@ export function buildUiSchemaFromForm(form: IForm, components: IFormComponent[])
         case QuestionType.RadioCards:
           sectionUi[fieldKey] = {
             'ui:field': 'RadioCardsField',
-            'ui:options': { cards: q.cards ?? [] },
+            'ui:options': {
+              cards: q.cards ?? [],
+              ...(q.styles ? { customStyles: q.styles } : {}),
+            },
           }
           break
         case QuestionType.CheckboxCards:
           sectionUi[fieldKey] = {
             'ui:field': 'CheckboxCardsField',
-            'ui:options': { cards: q.cards ?? [] },
+            'ui:options': {
+              cards: q.cards ?? [],
+              ...(q.styles ? { customStyles: q.styles } : {}),
+            },
           }
           break
         case QuestionType.ContactVerification:

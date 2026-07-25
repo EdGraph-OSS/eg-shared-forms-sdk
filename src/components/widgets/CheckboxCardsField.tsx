@@ -1,5 +1,6 @@
 import type { FieldProps } from '@rjsf/utils'
 import type { ReactNode } from 'react'
+import type { SystemStyleObject } from '@chakra-ui/react'
 import {
   CheckboxCard,
   Fieldset,
@@ -21,6 +22,7 @@ type CheckboxCardItem = {
 
 type CheckboxCardsOptions = {
   cards?: CheckboxCardItem[]
+  customStyles?: SystemStyleObject
 }
 
 type CheckboxCardsValue = Record<string, boolean>
@@ -132,6 +134,7 @@ export default function CheckboxCardsField(props: FieldProps) {
 
   const choiceCardStyles = useRecipeStyles('choiceCard', choiceCardRecipe)
   const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  const containerStyles = { ...choiceCardStyles().container, ...(uiOptions.customStyles ?? {}) }
 
   function renderCard(item: CheckboxCardItem, sub: boolean): ReactNode {
     const cardStyles = choiceCardStyles({ sub })
@@ -194,7 +197,8 @@ export default function CheckboxCardsField(props: FieldProps) {
     <Fieldset.Root
       className="eg-checkbox-cards-widget"
       disabled={isDisabled}
-      invalid={hasError}>
+      invalid={hasError}
+      css={containerStyles}>
       {props.uiSchema?.['ui:header'] && (
         <Fieldset.Legend css={headerStyles} mb="16px">
           {props.uiSchema?.['ui:header']}

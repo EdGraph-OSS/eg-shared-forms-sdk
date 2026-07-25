@@ -1,5 +1,6 @@
 import type { FieldProps } from '@rjsf/utils'
 import type { ReactNode } from 'react'
+import type { SystemStyleObject } from '@chakra-ui/react'
 import {
   Field,
   RadioCard,
@@ -28,6 +29,8 @@ type RadioCardItem = {
 type RadioCardsOptions = {
   /** Cards to render, in display order. */
   cards?: RadioCardItem[]
+  /** Chakra style overrides applied to the field's outer container. */
+  customStyles?: SystemStyleObject
 }
 
 /** The stored value: a flat map of selected card values to `true`. Unselected cards are omitted. */
@@ -120,6 +123,7 @@ function deepestSelected(cards: RadioCardItem[], value: RadioCardsValue): string
  *   'ui:field': 'RadioCardsField'
  *   'ui:options':
  *     cards: RadioCardItem[] — each { value, title, description?, icon?, subItems? }
+ *     customStyles: Chakra SystemStyleObject applied to the field's outer container
  */
 export default function RadioCardsField(props: FieldProps) {
   const uiOptions = (props.uiSchema?.['ui:options'] ?? {}) as RadioCardsOptions
@@ -166,6 +170,7 @@ export default function RadioCardsField(props: FieldProps) {
 
   const choiceCardStyles = useRecipeStyles('choiceCard', choiceCardRecipe)
   const headerStyles = useSingleRecipeStyles('fieldHeader', fieldHeaderRecipe)()
+  const containerStyles = { ...choiceCardStyles().container, ...(uiOptions.customStyles ?? {}) }
 
   function renderCard(item: RadioCardItem, sub: boolean): ReactNode {
     const cardStyles = choiceCardStyles({ sub })
@@ -205,6 +210,7 @@ export default function RadioCardsField(props: FieldProps) {
       required={props.required}
       readOnly={props.readonly}
       invalid={hasError}
+      css={containerStyles}
     >
       {props.uiSchema?.['ui:header'] && (
         <Text css={headerStyles} mb="16px">

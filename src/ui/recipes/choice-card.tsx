@@ -3,8 +3,9 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 /** Card label/description look shared by RadioCardsField and CheckboxCardsField. */
 export const choiceCardRecipe = defineSlotRecipe({
   className: 'eg-choice-card-recipe',
-  slots: ['label', 'description'],
+  slots: ['container', 'label', 'description'],
   base: {
+    container: {},
     label: {
       fontWeight: '700',
     },

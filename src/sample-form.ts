@@ -977,7 +977,11 @@ const questions = [
           "title": "No, I'll provide my own transportation",
           "description": "Parent will drive or arrange other transportation"
         }
-      ]
+      ],
+      "styles": {
+        "borderRadius": "12px",
+        "padding": "4px"
+      }
     },
     "validation": {},
     "options": [],
@@ -1027,7 +1031,11 @@ const questions = [
           "title": "After-school care",
           "description": "Supervised care until 6:00 PM"
         }
-      ]
+      ],
+      "styles": {
+        "borderRadius": "12px",
+        "padding": "4px"
+      }
     },
     "validation": {},
     "options": [],

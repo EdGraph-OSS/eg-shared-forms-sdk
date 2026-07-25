@@ -78,7 +78,7 @@ export interface IFormQuestion {
   body?: string
   /** Email/Phone widget: input placeholder text. */
   placeholder?: string
-  /** InfoMessage widget: Chakra style overrides for the callout container. */
+  /** InfoMessage/InfoCard/ContactVerification/RadioCards/CheckboxCards: Chakra style overrides for the container. */
   styles?: Record<string, unknown>
   /** InfoMessage widget: optional lines rendered as a bulleted list below the text. */
   list?: string[]
@@ -170,7 +170,7 @@ export interface IFormComponentOpts {
   body?: string
   /** Email/Phone: input placeholder text. */
   placeholder?: string
-  /** InfoMessage/InfoCard: Chakra style overrides for the container. */
+  /** InfoMessage/InfoCard/ContactVerification/RadioCards/CheckboxCards: Chakra style overrides for the container. */
   styles?: Record<string, unknown>
   /** InfoMessage: optional lines rendered as a bulleted list below the text. */
   list?: string[]
