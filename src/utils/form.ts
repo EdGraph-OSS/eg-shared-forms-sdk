@@ -139,6 +139,7 @@ function normalizeQuestion(q: IFormQuestion): IFormQuestion {
     maskedEmailLabel: c.maskedEmailLabel ?? q.maskedEmailLabel,
     maskedPhoneLabel: c.maskedPhoneLabel ?? q.maskedPhoneLabel,
     orLabel: c.orLabel ?? q.orLabel,
+    tryButton: c.tryButton ?? q.tryButton,
     validation: {
       ...q.validation,
       minLength: c.minLength ?? q.validation?.minLength,
@@ -389,6 +390,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
         question.maskedEmailLabel = typeof cvOpts.maskedEmailLabel === 'string' ? cvOpts.maskedEmailLabel : undefined
         question.maskedPhoneLabel = typeof cvOpts.maskedPhoneLabel === 'string' ? cvOpts.maskedPhoneLabel : undefined
         question.orLabel = typeof cvOpts.orLabel === 'string' ? cvOpts.orLabel : undefined
+        question.tryButton = (cvOpts.tryButton && typeof cvOpts.tryButton === 'object') ? cvOpts.tryButton as { show?: boolean, text?: string } : undefined
       }
 
       // Persist Widgets through the CustomComponent path: move the widget kind + the config
@@ -415,6 +417,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
           ...(question.maskedEmailLabel !== undefined ? { maskedEmailLabel: question.maskedEmailLabel } : {}),
           ...(question.maskedPhoneLabel !== undefined ? { maskedPhoneLabel: question.maskedPhoneLabel } : {}),
           ...(question.orLabel !== undefined ? { orLabel: question.orLabel } : {}),
+          ...(question.tryButton !== undefined ? { tryButton: question.tryButton } : {}),
           ...(v?.minLength !== undefined ? { minLength: v.minLength } : {}),
           ...(v?.maxLength !== undefined ? { maxLength: v.maxLength } : {}),
           ...(v?.pattern !== undefined ? { pattern: v.pattern } : {}),
@@ -437,6 +440,7 @@ export function buildFormFromJsonSchema(schema: JSONSchema7, uiSchema: UiSchema)
         question.maskedEmailLabel = undefined
         question.maskedPhoneLabel = undefined
         question.orLabel = undefined
+        question.tryButton = undefined
         question.validation = undefined
       }
 
@@ -746,6 +750,7 @@ export function buildUiSchemaFromForm(form: IForm, components: IFormComponent[])
               ...(q.maskedEmailLabel ? { maskedEmailLabel: q.maskedEmailLabel } : {}),
               ...(q.maskedPhoneLabel ? { maskedPhoneLabel: q.maskedPhoneLabel } : {}),
               ...(q.orLabel ? { orLabel: q.orLabel } : {}),
+              ...(q.tryButton ? { tryButton: q.tryButton } : {}),
             },
           }
           break

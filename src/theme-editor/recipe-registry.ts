@@ -181,6 +181,96 @@ export const widgetComponentGroups: ComponentGroup[] = componentGroups.filter(
   group => group.kind === 'widget' && group.supportsCustomStyles,
 )
 
+/**
+ * Starting-point example for each widget's `customStyles`, mirroring the `component.styles`
+ * convention used in sample-form.ts. These are illustrative, not an enforced allow-list — any
+ * Chakra `SystemStyleObject` key still works since each widget just spreads `customStyles` onto
+ * its own container/field css. `ComponentStylesPanel` seeds the JSON editor with these the first
+ * time a widget is selected, so users see which properties that widget typically styles.
+ */
+export const customStylesSeeds: Partial<Record<string, Record<string, unknown>>> = {
+  CheckboxCardsField: {
+    borderRadius: '12px',
+    padding: '4px',
+  },
+  ContactVerificationField: {
+    bg: '#fdeef0',
+    border: '1px solid #e8a3ad',
+    borderRadius: '12px',
+    padding: '20px 24px',
+    tryAgainButton: {
+      color: '#e8a3ad',
+      borderColor: '#e8a3ad',
+    },
+  },
+  DateDropdownWidget: {
+    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+  },
+  InfoCardWidget: {
+    bg: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    padding: '16px',
+  },
+  InfoMessageWidget: {
+    bg: '#fff3cd',
+    borderLeft: '4px solid #ffc107',
+    borderRadius: '4px',
+    padding: '20px',
+  },
+  RadioCardsField: {
+    borderRadius: '12px',
+    padding: '4px',
+  },
+}
+
+/**
+ * Starting-point example for each widget's non-style `component` properties — the `ui:options`/
+ * `options` fields a widget reads besides `customStyles` (title, icon, cards, copy, …), mirroring
+ * sample-form.ts's `component` object minus its `styles` key. Illustrative only, same as
+ * `customStylesSeeds`: `ComponentStylesPanel`'s "Other options" editor seeds from these.
+ */
+export const componentOptionsSeeds: Partial<Record<string, Record<string, unknown>>> = {
+  CheckboxCardsField: {
+    cards: [
+      { value: 'email', title: 'Email', description: 'Get updates by email', icon: '✉️' },
+      { value: 'sms', title: 'SMS', description: 'Get updates by text', icon: '📱' },
+    ],
+  },
+  ContactVerificationField: {
+    title: 'Verify your contact info',
+    icon: '🔒',
+    maskedEmailLabel: 'Confirm the email we have on file:',
+    maskedPhoneLabel: 'Confirm the phone we have on file:',
+    tryButton: {
+      show: true,
+      text: 'Try Again',
+    },
+  },
+  DateDropdownWidget: {
+    minYear: 2000,
+    maxYear: 2030,
+  },
+  InfoCardWidget: {
+    title: 'Student Information',
+    icon: '📋',
+    content: [
+      { type: 'rows', rows: [{ label: 'Name:', value: 'Jordan Lee' }, { label: 'Grade:', value: '5th' }] },
+    ],
+  },
+  InfoMessageWidget: {
+    preText: '🔒 Your privacy matters:',
+    text: 'This information is used only for verification.',
+  },
+  RadioCardsField: {
+    cards: [
+      { value: 'email', title: 'Email', description: 'Get updates by email', icon: '✉️' },
+      { value: 'sms', title: 'SMS', description: 'Get updates by text', icon: '📱' },
+    ],
+  },
+}
+
 export function entryId(entry: RecipeEntryRef): string {
   return `${entry.kind}:${entry.key}`
 }

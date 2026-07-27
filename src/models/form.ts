@@ -100,6 +100,11 @@ export interface IFormQuestion {
   maskedPhoneLabel?: string
   /** ContactVerification widget: separator text between the email and phone inputs (defaults to "or"). */
   orLabel?: string
+  /** ContactVerification widget: the "Try Again" button — show defaults to true, text defaults to "Try Again". */
+  tryButton?: {
+    show?: boolean
+    text?: string
+  }
   options?: string[] // For select fields
   order?: number
   component?: IFormComponentOpts
@@ -192,6 +197,11 @@ export interface IFormComponentOpts {
   maskedPhoneLabel?: string
   /** ContactVerification: separator text between the email and phone inputs (defaults to "or"). */
   orLabel?: string
+  /** ContactVerification: the "Try Again" button — show defaults to true, text defaults to "Try Again". */
+  tryButton?: {
+    show?: boolean
+    text?: string
+  }
   /** Email/Phone/VerificationCode: validation carried in the free-form blob (the service may not persist these on the question). */
   minLength?: number
   maxLength?: number

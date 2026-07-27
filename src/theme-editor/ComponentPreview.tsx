@@ -36,8 +36,13 @@ import {
 
 const noop = () => {}
 
-/** Props every entry in `PREVIEW_COMPONENTS` accepts; only the handful of widgets that support the `customStyles` convention read it. */
-type PreviewProps = { customStyles?: Record<string, unknown> }
+/**
+ * Props every entry in `PREVIEW_COMPONENTS` accepts; only the handful of widgets that support the
+ * `customStyles` convention read either of these. `options` overrides that same widget's other
+ * (non-style) `component` properties — title, icon, cards, copy, etc. — spread over each preview's
+ * own hardcoded defaults below.
+ */
+type PreviewProps = { customStyles?: Record<string, unknown>, options?: Record<string, unknown> }
 
 /** Sample data shared across a handful of previews below. */
 const ENUM_OPTIONS = [
@@ -74,13 +79,14 @@ const SAMPLE_IMAGE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="320" he
   + '</svg>'
 const SAMPLE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(SAMPLE_IMAGE_SVG)}`
 
-function PreviewCheckboxCardsField({ customStyles }: PreviewProps = {}) {
+function PreviewCheckboxCardsField({ customStyles, options }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, boolean>>({})
   // CheckboxCardsField derives its DOM id/name straight from each card's `value` (unlike
   // RadioCardsField, which lets Ark UI auto-generate ids) — salting the values keeps this preview's
   // ids unique when `ThemeEditorPanel` and `ComponentStylesPanel` both mount it at once.
   const uid = useId()
-  const cards = CARD_ITEMS.map(item => ({ ...item, value: `${item.value}-${uid}` }))
+  const cardItems = Array.isArray(options?.cards) ? options.cards as typeof CARD_ITEMS : CARD_ITEMS
+  const cards = cardItems.map(item => ({ ...item, value: `${item.value}-${uid}` }))
   return (
     <CheckboxCardsField {...({
       uiSchema: { 'ui:header': 'Notification preferences', 'ui:options': { cards, customStyles } },
@@ -112,7 +118,7 @@ function PreviewCheckboxFieldWidget() {
   )
 }
 
-function PreviewContactVerificationField({ customStyles }: PreviewProps = {}) {
+function PreviewContactVerificationField({ customStyles, options }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, unknown>>({})
   return (
     <ContactVerificationField {...({
@@ -122,6 +128,7 @@ function PreviewContactVerificationField({ customStyles }: PreviewProps = {}) {
           icon: '🔒',
           maskedEmailLabel: 'Confirm the email we have on file:',
           maskedPhoneLabel: 'Confirm the phone we have on file:',
+          ...options,
           customStyles,
         },
       },
@@ -158,14 +165,14 @@ function PreviewCurrentUserName() {
   )
 }
 
-function PreviewDateDropdownWidget({ customStyles }: PreviewProps = {}) {
+function PreviewDateDropdownWidget({ customStyles, options }: PreviewProps = {}) {
   const [value, setValue] = useState<string | undefined>(undefined)
   return (
     <DateDropdownWidget {...({
       name: 'preview-date-dropdown',
       value,
       onChange: setValue,
-      options: { minYear: 2000, maxYear: 2030, customStyles },
+      options: { minYear: 2000, maxYear: 2030, ...options, customStyles },
       rawErrors: [],
       uiSchema: { 'ui:header': 'Date of birth' },
       disabled: false,
@@ -217,7 +224,7 @@ function PreviewImageFieldWidget() {
   )
 }
 
-function PreviewInfoCardWidget({ customStyles }: PreviewProps = {}) {
+function PreviewInfoCardWidget({ customStyles, options }: PreviewProps = {}) {
   return (
     <InfoCardWidget {...({
       options: {
@@ -226,6 +233,7 @@ function PreviewInfoCardWidget({ customStyles }: PreviewProps = {}) {
         content: [
           { type: 'rows', rows: [{ label: 'Name:', value: 'Jordan Lee' }, { label: 'Grade:', value: '5th' }] },
         ],
+        ...options,
         customStyles,
       },
     } as any)}
@@ -233,12 +241,13 @@ function PreviewInfoCardWidget({ customStyles }: PreviewProps = {}) {
   )
 }
 
-function PreviewInfoMessageWidget({ customStyles }: PreviewProps = {}) {
+function PreviewInfoMessageWidget({ customStyles, options }: PreviewProps = {}) {
   return (
     <InfoMessageWidget {...({
       options: {
         preText: '🔒 Your privacy matters:',
         text: 'This information is used only for verification.',
+        ...options,
         customStyles,
       },
     } as any)}
@@ -299,11 +308,12 @@ function PreviewPhoneFieldWidget() {
   )
 }
 
-function PreviewRadioCardsField({ customStyles }: PreviewProps = {}) {
+function PreviewRadioCardsField({ customStyles, options }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, boolean>>({})
+  const cards = Array.isArray(options?.cards) ? options.cards as typeof CARD_ITEMS : CARD_ITEMS
   return (
     <RadioCardsField {...({
-      uiSchema: { 'ui:header': 'Preferred contact method', 'ui:options': { cards: CARD_ITEMS, customStyles } },
+      uiSchema: { 'ui:header': 'Preferred contact method', 'ui:options': { cards, customStyles } },
       formData,
       onChange: (next: Record<string, boolean> | undefined) => setFormData(next ?? {}),
       fieldPathId: { path: [] },
@@ -539,9 +549,11 @@ interface ComponentPreviewProps {
   name: string
   /** Per-instance style override, mirroring the `customStyles` a widget reads from its own `ui:options`/`options` — only applied by widgets that support the convention. */
   customStyles?: Record<string, unknown>
+  /** Per-instance override of the widget's other (non-style) `component` properties — title, icon, cards, copy, etc. — only applied by widgets that support the convention. */
+  options?: Record<string, unknown>
 }
 
-export function ComponentPreview({ name, customStyles }: ComponentPreviewProps) {
+export function ComponentPreview({ name, customStyles, options }: ComponentPreviewProps) {
   const Preview = PREVIEW_COMPONENTS[name]
   if (!Preview) {
     return (
@@ -553,7 +565,7 @@ export function ComponentPreview({ name, customStyles }: ComponentPreviewProps) 
 
   return (
     <PreviewBoundary resetKey={name}>
-      <Preview customStyles={customStyles} />
+      <Preview customStyles={customStyles} options={options} />
     </PreviewBoundary>
   )
 }

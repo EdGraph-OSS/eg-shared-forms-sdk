@@ -56,15 +56,19 @@ export function ComponentRecipeEditor({
         <RecipePicker entries={selectedComponent.entries} selected={selected} onSelect={setSelected} />
       </Flex>
       <Flex justifyContent='space-between' mt='16px' w='full'>
-        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} w='49%'>
-          <Text fontSize="xs" fontWeight="bold" color={chrome.mutedText} mb={3} textTransform="uppercase">
-            {selectedComponent.label} preview
-          </Text>
-          <ComponentPreview name={selectedComponent.name} />
-        </Box>
-        <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} _focusWithin={{ borderColor: chrome.primaryBrand }} w='49%'>
-          <Flex alignItems='center' w='full'>
-            <Text fontWeight='bold' fontSize="sm" mb='16px' color={chrome.mutedText}>
+        <Flex flexDir='column' w='49%'>
+          <Flex w='full' alignItems='center' h='32px' mb={2}>
+            <Text fontSize="md" fontWeight="bold" color={chrome.text} _dark={{ color: chrome.textDark }}>
+              {selectedComponent.label} preview
+            </Text>
+          </Flex>
+          <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} w='full'>
+            <ComponentPreview name={selectedComponent.name} />
+          </Box>
+        </Flex>
+        <Flex flexDir='column' w='49%'>
+          <Flex w='full' alignItems='center' h='32px' mb={2}>
+            <Text fontWeight='bold' fontSize="md" color={chrome.text} _dark={{ color: chrome.textDark }}>
               Editing {selected.kind === 'recipe' ? 'recipe' : 'slot recipe'} "{selected.key}"
             </Text>
             <Button
@@ -76,11 +80,13 @@ export function ComponentRecipeEditor({
               _hover={{ bg: chrome.buttonBgHover }}
               onClick={() => onResetComponent(selectedComponent.entries)}>Reset {selectedComponent.label} 🔄</Button>
           </Flex>
-          <JsonRecipeEditor
-            editorKey={`${selected.kind}:${selected.key}`}
-            value={currentValue}
-            onChange={handleChange} />
-        </Box>
+          <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} _focusWithin={{ borderColor: chrome.primaryBrand }} w='full'>
+            <JsonRecipeEditor
+              editorKey={`${selected.kind}:${selected.key}`}
+              value={currentValue}
+              onChange={handleChange} />
+          </Box>
+        </Flex>
       </Flex>
     </VStack>
   )

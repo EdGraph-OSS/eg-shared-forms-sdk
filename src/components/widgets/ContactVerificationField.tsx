@@ -46,16 +46,25 @@ type ContactVerificationFormContext = {
  *     maskedEmailLabel:   bold prompt shown above the email input (e.g. "Complete the email address we have on file:")
  *     maskedPhoneLabel:   bold prompt shown above the phone input (e.g. "Complete the phone number we have on file:")
  *     orLabel:            separator text between the two inputs (defaults to "or")
- *     customStyles:       Chakra SystemStyleObject applied to the card container
+ *     tryButton:          { show?: boolean, text?: string } — show defaults to true, text
+ *                         defaults to "Try Again"; the button itself only renders when the
+ *                         registry also supplies `formContext.onExecuteAction`
+ *     customStyles:       Chakra SystemStyleObject applied to the card container; a nested
+ *                         `tryAgainButton` key is pulled out of it and applied to the "Try Again"
+ *                         button instead — the remaining keys style the container as before
  *
  * The actual masked email/phone on file are per-user, not part of the form definition, so they
  * come from RJSF's `formContext` instead: `formContext={{ maskedEmail, maskedPhone }}`. They are
  * appended after the corresponding `ui:options` label.
  */
+type ContactVerificationCustomStyles = SystemStyleObject & { tryAgainButton?: SystemStyleObject }
+
 export default function ContactVerificationField(props: FieldProps) {
   const options = (props.uiSchema?.['ui:options'] ?? {}) as Record<string, unknown>
   const recipeStyles = useRecipeStyles('contactVerification', contactVerificationRecipe)()
-  const styles = { ...recipeStyles.container, ...(options.customStyles as SystemStyleObject | undefined ?? {}) }
+  const customStyles = (options.customStyles ?? {}) as ContactVerificationCustomStyles
+  const { tryAgainButton: tryAgainButtonStyles, ...containerCustomStyles } = customStyles
+  const styles = { ...recipeStyles.container, ...containerCustomStyles }
   const title = (typeof options.title === 'string' && options.title)
     || (typeof props.schema?.title === 'string' ? props.schema.title : '')
   const icon = typeof options.icon === 'string' ? options.icon : ''
@@ -67,6 +76,9 @@ export default function ContactVerificationField(props: FieldProps) {
   console.log("form context", formContext)
 
   const retryAction = typeof options.retryAction === 'string' ? options.retryAction : 'contact-verification:retry'
+  const tryButtonOptions = (options.tryButton ?? {}) as { show?: boolean, text?: string }
+  const showTryButton = tryButtonOptions.show !== false
+  const tryButtonText = tryButtonOptions.text || 'Try Again'
   const hasMaskedEmail = !!formContext.maskedEmail?.trim()
   const hasMaskedPhone = !!formContext.maskedPhone?.trim()
   const maskedEmailLabel = [
@@ -187,14 +199,14 @@ export default function ContactVerificationField(props: FieldProps) {
         )}
       </Box>
 
-      {onExecuteAction && (
+      {onExecuteAction && showTryButton && (
         <Button
           mt={2}
           size="sm"
           variant="outline"
           onClick={() => onExecuteAction(retryAction)}
-        >
-          Try Again
+          css={tryAgainButtonStyles}>
+          {tryButtonText}
         </Button>
       )}
     </Field.Root>

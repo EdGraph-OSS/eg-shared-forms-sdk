@@ -1060,11 +1060,19 @@ const questions = [
       "icon": "📞",
       "maskedEmailLabel": "Complete the email address we have on file:",
       "maskedPhoneLabel": "Complete the phone number we have on file:",
+      "tryButton": {
+        "show": true,
+        "text": "Try Again"
+      },
       "styles": {
         "bg": "#fdeef0",
         "border": "1px solid #e8a3ad",
         "borderRadius": "12px",
-        "padding": "20px 24px"
+        "padding": "20px 24px",
+        "tryAgainButton": {
+          "color": "#e8a3ad",
+          "borderColor": "#e8a3ad"
+        }
       }
     },
     "validation": {},
