@@ -90,6 +90,8 @@ export interface ComponentGroup {
   label: string
   kind: ComponentKind
   entries: RecipeEntryRef[]
+  /** Whether this widget/template also accepts a per-instance `customStyles` override via `ui:options` (see the widget's own source for the convention). Templates never do — only widgets opt in one at a time. */
+  supportsCustomStyles: boolean
 }
 
 function humanizeComponentName(key: string): string {
@@ -150,13 +152,33 @@ const componentRecipeMap: Record<ComponentKind, Record<string, RecipeEntryRef[]>
   },
 }
 
+/**
+ * Widgets that read a `customStyles` override out of `ui:options` (in addition to the global
+ * recipe/slotRecipe styling above) — see each widget's own source for the convention. Being
+ * retrofitted one widget at a time, so this list is expected to grow.
+ */
+const WIDGETS_WITH_CUSTOM_STYLES: Set<string> = new Set([
+  'CheckboxCardsField',
+  'ContactVerificationField',
+  'DateDropdownWidget',
+  'InfoCardWidget',
+  'InfoMessageWidget',
+  'RadioCardsField',
+])
+
 export const componentGroups: ComponentGroup[] = (['widget', 'template'] as ComponentKind[]).flatMap(kind =>
   Object.entries(componentRecipeMap[kind]).map(([name, entries]): ComponentGroup => ({
     name,
     label: humanizeComponentName(name),
     kind,
     entries,
+    supportsCustomStyles: WIDGETS_WITH_CUSTOM_STYLES.has(name),
   })),
+)
+
+/** Widgets that support a per-instance `customStyles` override — the only ones `ComponentStylesPanel` lets you pick. */
+export const widgetComponentGroups: ComponentGroup[] = componentGroups.filter(
+  group => group.kind === 'widget' && group.supportsCustomStyles,
 )
 
 export function entryId(entry: RecipeEntryRef): string {

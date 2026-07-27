@@ -1,4 +1,5 @@
 export { ThemeEditorPanel } from './ThemeEditorPanel'
+export { ComponentStylesPanel } from './ComponentStylesPanel'
 export { useThemeEditorState } from './useThemeEditorState'
 export type { ThemeTokens, FontTokenKey } from './useThemeEditorState'
 export { recipeDefaults, slotRecipeDefaults, recipeEntries, resolveEntryValue, componentGroups } from './recipe-registry'

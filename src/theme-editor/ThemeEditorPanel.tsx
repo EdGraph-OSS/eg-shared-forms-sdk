@@ -1,11 +1,7 @@
 import { useState } from 'react'
-import { Box, Button, Flex, Heading, HStack, Input, RadioGroup, Text, VStack } from '@chakra-ui/react'
-import { componentGroups, resolveEntryValue } from './recipe-registry'
-import type { ComponentGroup, RecipeEntryRef } from './recipe-registry'
-import { JsonRecipeEditor } from './JsonRecipeEditor'
-import { ComponentPicker } from './ComponentPicker'
-import { ComponentPreview } from './ComponentPreview'
-import { RecipePicker } from './RecipePicker'
+import { Box, Button, Flex, Heading, HStack, Input, RadioGroup, Text } from '@chakra-ui/react'
+import type { RecipeEntryRef } from './recipe-registry'
+import { ComponentRecipeEditor } from './ComponentRecipeEditor'
 import { ExportPanel } from './ExportPanel'
 import { ColorTokensEditor } from './ColorTokensEditor'
 import { FontTokensEditor } from './FontTokensEditor'
@@ -51,22 +47,8 @@ export function ThemeEditorPanel({
   onLoadTheme,
 }: ThemeEditorPanelProps) {
   const [mode, setMode] = useState<EditorMode>('components')
-  const [selectedComponent, setSelectedComponent] = useState<ComponentGroup>(componentGroups[0])
-  const [selected, setSelected] = useState<RecipeEntryRef>(componentGroups[0].entries[0])
   const [themeName, setThemeName] = useState('')
   const [themeVersion, setThemeVersion] = useState('')
-
-  const handleSelectComponent = (group: ComponentGroup) => {
-    setSelectedComponent(group)
-    setSelected(group.entries[0])
-  }
-
-  const currentValue = resolveEntryValue(selected, recipes, slotRecipes)
-
-  const handleChange = (parsed: unknown) => {
-    if (selected.kind === 'recipe') onRecipeChange(selected.key, parsed)
-    else onSlotRecipeChange(selected.key, parsed)
-  }
 
   const handleLoadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -185,46 +167,13 @@ export function ThemeEditorPanel({
         </HStack>
       </RadioGroup.Root>
       {mode === 'components' && (
-        <VStack
+        <ComponentRecipeEditor
           key={mode}
-          flexDir='column'
-          align="stretch"
-          gap={3}
-          animationName="fade-in, slide-from-bottom"
-          animationDuration="0.25s"
-          animationTimingFunction="ease-out">
-          <Flex flexDir='column' gap='16px' w='350px'>
-            <ComponentPicker groups={componentGroups} selected={selectedComponent} onSelect={handleSelectComponent} />
-            <RecipePicker entries={selectedComponent.entries} selected={selected} onSelect={setSelected} />
-          </Flex>
-          <Flex justifyContent='space-between' mt='16px' w='full'>
-            <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} w='49%'>
-              <Text fontSize="xs" fontWeight="bold" color={chrome.mutedText} mb={3} textTransform="uppercase">
-                {selectedComponent.label} preview
-              </Text>
-              <ComponentPreview name={selectedComponent.name} />
-            </Box>
-            <Box borderWidth="1px" borderColor={chrome.border} borderRadius="md" p={4} bg={chrome.panelBg} _dark={{ bg: chrome.panelBgDark, borderColor: chrome.borderDark }} _hover={{ borderColor: chrome.primaryBrand, boxShadow: `0 0 3px ${chrome.primaryBrand}` }} _focusWithin={{ borderColor: chrome.primaryBrand }} w='49%'>
-              <Flex alignItems='center' w='full'>
-                <Text fontWeight='bold' fontSize="sm" mb='16px' color={chrome.mutedText}>
-                  Editing {selected.kind === 'recipe' ? 'recipe' : 'slot recipe'} "{selected.key}"
-                </Text>
-                <Button
-                  bg={chrome.buttonBg}
-                  color="white"
-                  fontWeight='bold'
-                  size="xs"
-                  ml='auto'
-                  _hover={{ bg: chrome.buttonBgHover }}
-                  onClick={() => onResetComponent(selectedComponent.entries)}>Reset {selectedComponent.label} 🔄</Button>
-              </Flex>
-              <JsonRecipeEditor
-                editorKey={`${selected.kind}:${selected.key}`}
-                value={currentValue}
-                onChange={handleChange} />
-            </Box>
-          </Flex>
-        </VStack>
+          recipes={recipes}
+          slotRecipes={slotRecipes}
+          onRecipeChange={onRecipeChange}
+          onSlotRecipeChange={onSlotRecipeChange}
+          onResetComponent={onResetComponent} />
       )}
       {mode === 'colors' && (
         <Box

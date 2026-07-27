@@ -1,4 +1,4 @@
-import { Component, useState } from 'react'
+import { Component, useId, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Box, Input, Text } from '@chakra-ui/react'
 import { chrome } from './chromeColors'
@@ -36,6 +36,9 @@ import {
 
 const noop = () => {}
 
+/** Props every entry in `PREVIEW_COMPONENTS` accepts; only the handful of widgets that support the `customStyles` convention read it. */
+type PreviewProps = { customStyles?: Record<string, unknown> }
+
 /** Sample data shared across a handful of previews below. */
 const ENUM_OPTIONS = [
   { value: 'red', label: 'Red' },
@@ -71,11 +74,16 @@ const SAMPLE_IMAGE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="320" he
   + '</svg>'
 const SAMPLE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(SAMPLE_IMAGE_SVG)}`
 
-function PreviewCheckboxCardsField() {
+function PreviewCheckboxCardsField({ customStyles }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, boolean>>({})
+  // CheckboxCardsField derives its DOM id/name straight from each card's `value` (unlike
+  // RadioCardsField, which lets Ark UI auto-generate ids) — salting the values keeps this preview's
+  // ids unique when `ThemeEditorPanel` and `ComponentStylesPanel` both mount it at once.
+  const uid = useId()
+  const cards = CARD_ITEMS.map(item => ({ ...item, value: `${item.value}-${uid}` }))
   return (
     <CheckboxCardsField {...({
-      uiSchema: { 'ui:header': 'Notification preferences', 'ui:options': { cards: CARD_ITEMS } },
+      uiSchema: { 'ui:header': 'Notification preferences', 'ui:options': { cards, customStyles } },
       formData,
       onChange: (next: Record<string, boolean> | undefined) => setFormData(next ?? {}),
       fieldPathId: { path: [] },
@@ -104,7 +112,7 @@ function PreviewCheckboxFieldWidget() {
   )
 }
 
-function PreviewContactVerificationField() {
+function PreviewContactVerificationField({ customStyles }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, unknown>>({})
   return (
     <ContactVerificationField {...({
@@ -114,6 +122,7 @@ function PreviewContactVerificationField() {
           icon: '🔒',
           maskedEmailLabel: 'Confirm the email we have on file:',
           maskedPhoneLabel: 'Confirm the phone we have on file:',
+          customStyles,
         },
       },
       schema: { title: 'Contact Verification' },
@@ -149,14 +158,14 @@ function PreviewCurrentUserName() {
   )
 }
 
-function PreviewDateDropdownWidget() {
+function PreviewDateDropdownWidget({ customStyles }: PreviewProps = {}) {
   const [value, setValue] = useState<string | undefined>(undefined)
   return (
     <DateDropdownWidget {...({
       name: 'preview-date-dropdown',
       value,
       onChange: setValue,
-      options: { minYear: 2000, maxYear: 2030 },
+      options: { minYear: 2000, maxYear: 2030, customStyles },
       rawErrors: [],
       uiSchema: { 'ui:header': 'Date of birth' },
       disabled: false,
@@ -208,7 +217,7 @@ function PreviewImageFieldWidget() {
   )
 }
 
-function PreviewInfoCardWidget() {
+function PreviewInfoCardWidget({ customStyles }: PreviewProps = {}) {
   return (
     <InfoCardWidget {...({
       options: {
@@ -217,18 +226,20 @@ function PreviewInfoCardWidget() {
         content: [
           { type: 'rows', rows: [{ label: 'Name:', value: 'Jordan Lee' }, { label: 'Grade:', value: '5th' }] },
         ],
+        customStyles,
       },
     } as any)}
     />
   )
 }
 
-function PreviewInfoMessageWidget() {
+function PreviewInfoMessageWidget({ customStyles }: PreviewProps = {}) {
   return (
     <InfoMessageWidget {...({
       options: {
         preText: '🔒 Your privacy matters:',
         text: 'This information is used only for verification.',
+        customStyles,
       },
     } as any)}
     />
@@ -288,11 +299,11 @@ function PreviewPhoneFieldWidget() {
   )
 }
 
-function PreviewRadioCardsField() {
+function PreviewRadioCardsField({ customStyles }: PreviewProps = {}) {
   const [formData, setFormData] = useState<Record<string, boolean>>({})
   return (
     <RadioCardsField {...({
-      uiSchema: { 'ui:header': 'Preferred contact method', 'ui:options': { cards: CARD_ITEMS } },
+      uiSchema: { 'ui:header': 'Preferred contact method', 'ui:options': { cards: CARD_ITEMS, customStyles } },
       formData,
       onChange: (next: Record<string, boolean> | undefined) => setFormData(next ?? {}),
       fieldPathId: { path: [] },
@@ -464,7 +475,7 @@ function PreviewTitleFieldTemplate() {
   return <TitleFieldTemplate {...({ id: 'preview-title', title: 'Section Title', required: true } as any)} />
 }
 
-const PREVIEW_COMPONENTS: Record<string, () => ReactNode> = {
+const PREVIEW_COMPONENTS: Record<string, (props: PreviewProps) => ReactNode> = {
   CheckboxCardsField: PreviewCheckboxCardsField,
   CheckboxFieldWidget: PreviewCheckboxFieldWidget,
   ContactVerificationField: PreviewContactVerificationField,
@@ -526,9 +537,11 @@ class PreviewBoundary extends Component<{ resetKey: string, children: ReactNode 
 
 interface ComponentPreviewProps {
   name: string
+  /** Per-instance style override, mirroring the `customStyles` a widget reads from its own `ui:options`/`options` — only applied by widgets that support the convention. */
+  customStyles?: Record<string, unknown>
 }
 
-export function ComponentPreview({ name }: ComponentPreviewProps) {
+export function ComponentPreview({ name, customStyles }: ComponentPreviewProps) {
   const Preview = PREVIEW_COMPONENTS[name]
   if (!Preview) {
     return (
@@ -540,7 +553,7 @@ export function ComponentPreview({ name }: ComponentPreviewProps) {
 
   return (
     <PreviewBoundary resetKey={name}>
-      <Preview />
+      <Preview customStyles={customStyles} />
     </PreviewBoundary>
   )
 }
