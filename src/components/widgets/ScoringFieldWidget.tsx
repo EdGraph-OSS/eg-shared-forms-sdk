@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ariaDescribedByIds } from '@rjsf/utils'
+import { LuCheck } from 'react-icons/lu'
 import { scoringFieldRecipe } from '../../ui/recipes/scoring-field'
 import { useRecipeStyles } from '../../ui/use-recipe-styles'
 
@@ -77,10 +78,11 @@ export default function ScoringFieldWidget<T = any, S extends StrictRJSFSchema =
               className={isSelected ? "eg-active-score-bg" : "eg-inactive-score"}
               onClick={() => handleSelect(score)}
               disabled={readonly}
+              aria-pressed={isSelected}
               px={4}
               py={2}
-              borderRightWidth={score !== '0' ? '1px' : 0}
-              borderRightColor="whiteAlpha.400"
+              gap={1}
+              borderBottomColor={isSelected ? 'currentColor' : 'transparent'}
               _hover={readonly ? {} : { opacity: 0.9 }}
               css={{
                 ...buttonStyles,
@@ -88,6 +90,7 @@ export default function ScoringFieldWidget<T = any, S extends StrictRJSFSchema =
               }}
             >
               {score === '0' ? 'N/A' : score}
+              {isSelected && <LuCheck aria-hidden="true" size={14} />}
             </Button>
           )
         })}
