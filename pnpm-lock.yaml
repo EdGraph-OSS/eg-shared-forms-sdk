@@ -14,12 +14,6 @@ importers:
       '@chakra-ui/icons':
         specifier: ^2.2.4
         version: 2.2.4(@chakra-ui/react@3.34.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
-      '@chakra-ui/react':
-        specifier: ^3.34.0
-        version: 3.34.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@emotion/react':
-        specifier: ^11.14.0
-        version: 11.14.0(@types/react@19.2.14)(react@19.2.5)
       '@fontsource/archivo-narrow':
         specifier: ^5.2.8
         version: 5.2.8
@@ -56,16 +50,16 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      react:
-        specifier: ^19.2.5
-        version: 19.2.5
-      react-dom:
-        specifier: ^19.2.5
-        version: 19.2.5(react@19.2.5)
       react-icons:
         specifier: ^5.6.0
         version: 5.6.0(react@19.2.5)
     devDependencies:
+      '@chakra-ui/react':
+        specifier: ^3.34.0
+        version: 3.34.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@emotion/react':
+        specifier: ^11.14.0
+        version: 11.14.0(@types/react@19.2.14)(react@19.2.5)
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
@@ -87,6 +81,12 @@ importers:
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
+      react:
+        specifier: ^19.2.5
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3

@@ -6,6 +6,7 @@ import {
   mergeConfigs,
 } from '@chakra-ui/react'
 import type { SystemStyleObject } from '@chakra-ui/react'
+import { useMemo } from 'react'
 import { ColorModeProvider } from './color-mode'
 import type { ColorModeProviderProps } from './color-mode'
 import { colors } from './theme'
@@ -104,6 +105,11 @@ const SCOPE = `.${SCOPE_CLASS}`
 // reset rule such as `button { background-color: transparent }` ranks exactly as Chakra's
 // unscoped one would, and never outranks a recipe's class selector.
 const WITHIN_SCOPE = `:where(${SCOPE})`
+// Chakra hides closed popups and unchecked item indicators with the `hidden` attribute, relying
+// on its reset to keep a component's own `display` from showing them. Portalled content (select
+// menus, tooltips, toasts) renders outside the wrapper, beyond the scoped reset, so this one rule
+// stays page-wide.
+const HIDDEN = '[hidden]:where(:not([hidden=\'until-found\']))'
 
 /**
  * Re-targets Chakra's default global styles from the document (`html`, `*`) to the Provider's
@@ -120,10 +126,12 @@ function scopeGlobalCss(globalCss: Record<string, SystemStyleObject>) {
   }))
 }
 
-export function Provider({ recipes, slotRecipes, children, ...props }: ProviderProps) {
-  // console.log('recipes', recipes)
-  // console.log('recipeslots', slotRecipes)
-
+/**
+ * Builds the Chakra system for the forms. Chakra caches computed styles per system, so the
+ * Provider builds it once per recipe set rather than on every render — the form re-renders on
+ * every answer, and a fresh system made each field recompute its styles from scratch.
+ */
+function createFormsSystem(recipes?: ProviderRecipes, slotRecipes?: ProviderSlotRecipes) {
   const baseTheme = defineConfig({
     theme: {
       semanticTokens: {
@@ -172,18 +180,28 @@ export function Provider({ recipes, slotRecipes, children, ...props }: ProviderP
     ? mergeConfigs(baseTheme, defineConfig({ theme: { recipes, slotRecipes } }))
     : baseTheme
 
-  const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
   // Chakra wraps every style in a cascade layer by default, and any un-layered rule on the host
   // page beats every layered one regardless of specificity — so a host's CSS reset (the Forms
   // app's @unocss/reset) strips the recipes' borders, font sizes/weights and button colours.
   // Un-layered, the recipes' class selectors outrank a reset's element/universal selectors. That
   // would also let Chakra's own reset and global styles override the host page, so both are
   // scoped to the wrapper below.
-  const system = createSystem(
-    { ...defaultConfig, globalCss: scopeGlobalCss(defaultConfig.globalCss ?? {}) },
+  return createSystem(
+    {
+      ...defaultConfig,
+      globalCss: {
+        ...scopeGlobalCss(defaultConfig.globalCss ?? {}),
+        [HIDDEN]: { display: 'none !important' },
+      },
+    },
     defineConfig({ disableLayers: true, preflight: { scope: WITHIN_SCOPE } }),
     theme,
   )
+}
+
+export function Provider({ recipes, slotRecipes, children, ...props }: ProviderProps) {
+  const system = useMemo(() => createFormsSystem(recipes, slotRecipes), [recipes, slotRecipes])
+  const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
 
   return (
     <ChakraProvider value={system}>
