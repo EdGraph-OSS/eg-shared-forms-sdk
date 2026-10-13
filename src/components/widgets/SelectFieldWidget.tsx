@@ -124,6 +124,10 @@ export default function SelectFieldWidget(props: WidgetProps) {
         multiple={multiple}
         autoFocus={autofocus}
         closeOnSelect={!multiple}
+        // Render the options only while the menu is open: the whole form re-renders on every
+        // answer, and every closed select re-rendering its full option list dominated that cost.
+        lazyMount
+        unmountOnExit
         onFocus={_onFocus}
         onBlur={_onBlur}
         aria-describedby={ariaDescribedByIds(id)}
