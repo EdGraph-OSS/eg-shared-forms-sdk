@@ -5,6 +5,7 @@ import {
   defineConfig,
   mergeConfigs,
 } from '@chakra-ui/react'
+import type { SystemStyleObject } from '@chakra-ui/react'
 import { ColorModeProvider } from './color-mode'
 import type { ColorModeProviderProps } from './color-mode'
 import { colors } from './theme'
@@ -93,7 +94,33 @@ export interface ProviderProps extends ColorModeProviderProps {
   slotRecipes?: ProviderSlotRecipes
 }
 
-export function Provider({ recipes, slotRecipes, ...props }: ProviderProps) {
+/**
+ * Class of the element the Provider wraps its children in. Chakra's reset (preflight) and its
+ * global styles are scoped to it, so they style the form without reaching the host page.
+ */
+const SCOPE_CLASS = 'eg-shared-forms'
+const SCOPE = `.${SCOPE_CLASS}`
+// Prefix for rules aimed at the wrapper's descendants. `:where()` adds no specificity, so a scoped
+// reset rule such as `button { background-color: transparent }` ranks exactly as Chakra's
+// unscoped one would, and never outranks a recipe's class selector.
+const WITHIN_SCOPE = `:where(${SCOPE})`
+
+/**
+ * Re-targets Chakra's default global styles from the document (`html`, `*`) to the Provider's
+ * wrapper and its descendants. The wrapper itself is `display: contents`, so it adds no box to
+ * the host's layout while its inherited styles (colour, line height, fonts) still cascade.
+ */
+function scopeGlobalCss(globalCss: Record<string, SystemStyleObject>) {
+  return Object.fromEntries(Object.entries(globalCss).map(([selector, styles]) => {
+    if (selector === 'html') {
+      return [SCOPE, { ...styles, display: 'contents' }]
+    }
+    const scoped = selector.split(',').map(part => `${WITHIN_SCOPE} ${part.trim()}`)
+    return [(selector === '*' ? [SCOPE, ...scoped] : scoped).join(', '), styles]
+  }))
+}
+
+export function Provider({ recipes, slotRecipes, children, ...props }: ProviderProps) {
   // console.log('recipes', recipes)
   // console.log('recipeslots', slotRecipes)
 
@@ -146,11 +173,23 @@ export function Provider({ recipes, slotRecipes, ...props }: ProviderProps) {
     : baseTheme
 
   const isDarkMode = localStorage.getItem("selectedDarkMode") === "true"
-  const system = createSystem(defaultConfig, theme)
+  // Chakra wraps every style in a cascade layer by default, and any un-layered rule on the host
+  // page beats every layered one regardless of specificity — so a host's CSS reset (the Forms
+  // app's @unocss/reset) strips the recipes' borders, font sizes/weights and button colours.
+  // Un-layered, the recipes' class selectors outrank a reset's element/universal selectors. That
+  // would also let Chakra's own reset and global styles override the host page, so both are
+  // scoped to the wrapper below.
+  const system = createSystem(
+    { ...defaultConfig, globalCss: scopeGlobalCss(defaultConfig.globalCss ?? {}) },
+    defineConfig({ disableLayers: true, preflight: { scope: WITHIN_SCOPE } }),
+    theme,
+  )
 
   return (
     <ChakraProvider value={system}>
-      <ColorModeProvider {...props} defaultTheme={isDarkMode ? "dark" : "light"} />
+      <ColorModeProvider {...props} defaultTheme={isDarkMode ? "dark" : "light"}>
+        <div className={SCOPE_CLASS}>{children}</div>
+      </ColorModeProvider>
     </ChakraProvider>
   )
 }

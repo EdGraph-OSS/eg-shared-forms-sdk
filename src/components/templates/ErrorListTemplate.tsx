@@ -17,7 +17,7 @@ export default function ErrorListTemplate(props: ErrorListProps) {
       <ErrorListHeading>
         Please fix the following errors:
       </ErrorListHeading>
-      <List.Root gap={1}>
+      <List.Root variant='plain' gap={1}>
         {props.errors.map((error, index) => (
           <List.Item key={`${error.stack}-${index}`} css={styles.listItem}>
             {error.stack}
