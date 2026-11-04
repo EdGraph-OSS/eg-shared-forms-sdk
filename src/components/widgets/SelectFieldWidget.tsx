@@ -35,6 +35,11 @@ export default function SelectFieldWidget(props: WidgetProps) {
   }
 
   const _onSingleChange = ({ value }: SelectValueChangeDetails) => {
+    // Deselecting (clear trigger or re-clicking the chosen item) reports an empty selection; store
+    // emptyValue rather than `[]` so the answer is dropped from formData instead of saved as an array.
+    if (value.length === 0) {
+      return onChange(emptyValue)
+    }
     const selected = enumOptionsValueForIndex(value, enumOptions, emptyValue)
     return onChange(Array.isArray(selected) && selected.length === 1 ? selected[0] : selected)
   }

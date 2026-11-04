@@ -110,11 +110,12 @@ function App(props: Props) {
     [schema, uiSchemaWithReadOnly],
   )
 
-  const [formContext, setFormContext] = useState({ 
-    formData, 
-    maskedEmail: "elv**@gmail.com", 
+  // formData must track the live answers: CustomFieldTemplate evaluates ui:conditions against it.
+  const formContext = React.useMemo(() => ({
+    formData,
+    maskedEmail: "elv**@gmail.com",
     onExecuteAction
-  })
+  }), [formData])
 
   function onExecuteAction(action: 'contact-verification:retry', value: any) {
     console.log("actionId", action, value)
