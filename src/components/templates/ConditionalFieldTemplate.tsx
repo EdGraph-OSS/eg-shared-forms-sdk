@@ -1,6 +1,7 @@
 import type { FieldTemplateProps } from '@rjsf/utils'
 import type { ReactNode } from 'react'
 import { isString } from 'lodash-es'
+import { useEffect } from 'react'
 import { evaluateVisibilityConditions } from '../../utils/visibility-conditions'
 import { ConditionalField } from '../../ui/recipes/conditional-field'
 
@@ -47,6 +48,11 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
     uiSchema,
     registry,
     schema,
+    formData,
+    onChange,
+    fieldPathId,
+    readonly,
+    disabled,
   } = props
 
   const conditions = uiSchema?.['ui:conditions'] as Parameters<typeof evaluateVisibilityConditions>[0] | undefined
@@ -55,6 +61,17 @@ export function CustomFieldTemplate(props: FieldTemplateProps) {
   const conditionsMatch = !hasConditions || evaluateVisibilityConditions(conditions, rootData)
   const showRequiredStar = required
     || (!!uiSchema?.['ui:requiredWhenVisible'] && conditionsMatch)
+
+  // A field hidden by its conditions must not keep an answer the respondent can no longer see
+  // (e.g. an Action Step left behind after its Category is deselected). Clearing it may in turn
+  // hide fields that depend on it, which clear themselves on the next render. Read-only/disabled
+  // views only display a saved submission, so they are left untouched.
+  const isHiddenWithValue = hasConditions && !conditionsMatch && formData !== undefined
+  useEffect(() => {
+    if (isHiddenWithValue && !readonly && !disabled) {
+      onChange(undefined, fieldPathId.path)
+    }
+  }, [isHiddenWithValue, readonly, disabled])
 
   const wrapIfConditional = (node: ReactNode) =>
     hasConditions ? <ConditionalReveal isVisible={conditionsMatch}>{node}</ConditionalReveal> : node
